@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
+
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+.activeLink {
+  color: #2563eb;
+  font-weight: bold;
+  border-bottom: 2px solid #2563eb;
+}
+
+.hoverLink {
+  transition: 0.2s;
+}
+
+.hoverLink:hover {
+  color: #2563eb;
+}
