@@ -1,16 +1,75 @@
-# React + Vite
+# BloodCare - Blood Donation Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+BloodCare is a **MERN stack** based blood donation platform that connects blood donors with those in need, making the donation process seamless, efficient, and life-saving. The platform allows users to register as donors, create donation requests, search for donors, donate funds, and manage requests based on their roles (Donor, Volunteer, Admin).
 
-## React Compiler
+## Live Site
+🔗 **Live Link:** https://blood-care-a11.netlify.app/
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Admin Credentials (For Testing)
+- **Email:** admin@bloodcare.com  
+- **Password:** Admin@123
 
-## Expanding the ESLint configuration
+## Key Features
+### Public Features
+- User Registration & Login (Donor by default)
+- Search Donors by Blood Group, District, Upazila
+- View Public Pending Donation Requests
+- View Donation Request Details (Private – Login Required)
+- Funding Page (Stripe Payment Integration)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Donor Features
+- Create Donation Request
+- View & Manage Own Donation Requests (Pending, In-progress, Done, Canceled)
+- Update Profile (Name, Avatar, Blood Group, Address)
+- Edit/Delete Own Donation Requests
+- View Recent 3 Requests on Dashboard
+
+### Volunteer Features
+- View & Update Status of All Donation Requests
+- View Platform Statistics (Total Users, Funding, Requests)
+
+### Admin Features
+- Manage All Users (Block/Unblock, Change Role: Donor → Volunteer → Admin)
+- Manage All Donation Requests (Full Control)
+- View Platform Statistics (Total Users, Total Funding, Total Requests)
+- View & Manage All Funding Records
+
+### Additional Features
+- Role-based Access Control (RBAC)
+- JWT Authentication (Protected Routes & APIs)
+- Pagination & Filtering (Requests & Users)
+- Responsive Dashboard with Sidebar
+- Beautiful & Consistent UI/UX
+- Secure Environment Variables for Firebase & MongoDB
+
+## Tech Stack
+### Frontend
+- React.js + Vite
+- React Router v6
+- Tailwind CSS + DaisyUI
+- React Hot Toast (Notifications)
+- React Icons
+- Axios
+- React Helmet Async (SEO)
+- React Hook Form (Forms)
+
+### Backend
+- Node.js + Express.js
+- MongoDB (Mongoose)
+- JWT Authentication
+- Stripe Payment Integration
+- CORS
+- Dotenv
+
+### Deployment
+- Frontend: Netlify
+- Backend: Vercel
+
+## NPM Packages Used (Client Side)
+```bash
+react react-dom react-router-dom react-router
+tailwindcss daisyui axios react-hot-toast
+react-icons react-helmet-async react-hook-form
+@headlessui/react @heroicons/react
