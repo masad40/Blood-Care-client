@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
       }
       // ভবিষ্যতে যোগ করতে পারো:
       // { path: "search", element: <SearchPage /> },
-      // { path: "request/:id", element: <RequestDetails /> },
+      
     ],
   },
 
