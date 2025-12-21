@@ -5,7 +5,6 @@ import { AuthContext } from "../context/AuthContext";
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
 
-  // Theme state
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("theme");
     if (saved) return saved;
@@ -24,7 +23,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar bg-base-100 shadow-lg px-4 md:px-10 sticky top-0 z-50">
-      {/* Left - Logo & Mobile Menu */}
+ 
       <div className="navbar-start">
         <div className="dropdown">
           <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -39,7 +38,6 @@ const Navbar = () => {
             </svg>
           </label>
 
-          {/* Mobile Dropdown Menu */}
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 p-4 shadow bg-base-100 rounded-box w-64 z-50">
             <li><NavLink to="/" className="text-lg">Home</NavLink></li>
             <li><NavLink to="/donation-requests" className="text-lg">Donation Requests</NavLink></li>
@@ -57,7 +55,6 @@ const Navbar = () => {
               </>
             )}
 
-            {/* Theme Toggle in Mobile */}
             <li className="mt-4 border-t pt-4">
               <button onClick={toggleTheme} className="flex items-center gap-3 w-full">
                 <span className="text-2xl">{theme === "dark" ? "☀️" : "🌙"}</span>
@@ -72,7 +69,7 @@ const Navbar = () => {
         </Link>
       </div>
 
-      {/* Center - Desktop Menu */}
+     
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal gap-6 text-lg">
           <li><NavLink to="/" end>Home</NavLink></li>
@@ -81,9 +78,8 @@ const Navbar = () => {
         </ul>
       </div>
 
-      {/* Right - Theme + User */}
       <div className="navbar-end flex items-center gap-4">
-        {/* Theme Toggle (Desktop) */}
+      
         <button
           onClick={toggleTheme}
           className="btn btn-circle btn-ghost tooltip tooltip-bottom"
@@ -92,7 +88,6 @@ const Navbar = () => {
           <span className="text-2xl">{theme === "dark" ? "☀️" : "🌙"}</span>
         </button>
 
-        {/* User Menu */}
         {user ? (
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">

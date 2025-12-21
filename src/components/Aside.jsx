@@ -74,7 +74,7 @@ const Aside = () => {
         } lg:translate-x-0 lg:static lg:inset-auto`}
       >
         <div className="flex flex-col h-full">
-          {/* Logo - Clickable to Home */}
+
           <div className="p-8 border-b border-red-700">
             <Link
               to="/"
