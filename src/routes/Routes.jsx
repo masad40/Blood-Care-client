@@ -84,7 +84,7 @@ export const router = createBrowserRouter([
         path: "all-blood-donation-request",
         element: <AllBloodDonationRequest></AllBloodDonationRequest>,
       },
-      // ভবিষ্যতে admin/volunteer রুট 
+      // ভবিষ্যতে 
       // {
       //   path: "all-requests",
       //   element: <AllBloodDonationRequests />,
