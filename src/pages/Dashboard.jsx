@@ -50,7 +50,7 @@ const Dashboard = () => {
     }
   }, [user, authLoading, role]);
 
-  // Truncate long text function
+
   const truncateText = (text, maxLength = 25) => {
     if (!text || text.length <= maxLength) return text;
     return text.slice(0, maxLength).trim() + "...";
@@ -226,13 +226,12 @@ const Dashboard = () => {
                     </div>
                   </div>
                   
-                  {/* Scroll indicator */}
+                  
                   <div className="text-center mt-2 text-sm text-gray-500 dark:text-gray-400">
                     📱 <span className="font-semibold">Horizontal scroll available</span> on smaller screens →
                   </div>
                 </div>
 
-                {/* ✅ MOBILE & TABLET CARDS - Already responsive */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden mb-12">
                   {myRecentRequests.map((req) => (
                     <div key={req._id} className="card bg-base-100 dark:bg-gray-800 shadow-xl">
