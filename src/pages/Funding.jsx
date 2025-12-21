@@ -22,7 +22,7 @@ const Funding = () => {
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
-    // Auth loading না হলে তবেই check করো
+
     if (authLoading) return;
 
     if (!user) {
@@ -96,7 +96,7 @@ const Funding = () => {
     }
   };
 
-  // Loading state (auth + data)
+
   if (authLoading || pageLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -115,7 +115,7 @@ const Funding = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-            {/* Header */}
+        
             <div className="bg-gradient-to-r from-red-600 to-pink-600 px-6 py-12 text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
                 Support BloodCare Foundation
@@ -124,7 +124,6 @@ const Funding = () => {
                 Every donation helps us organize blood drives, raise awareness, and save lives across Bangladesh.
               </p>
 
-              {/* Total Funding - Responsive */}
               <div className="inline-block bg-white/20 backdrop-blur-lg rounded-3xl px-8 py-8 w-full max-w-md mx-auto">
                 <div className="stat-title text-white text-xl sm:text-2xl mb-2">Total Collected</div>
                 <div className="stat-value text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white">
@@ -133,7 +132,6 @@ const Funding = () => {
               </div>
             </div>
 
-            {/* Donate Button */}
             <div className="text-center py-12 bg-gray-100 dark:bg-gray-700">
               <button
                 onClick={() => setShowModal(true)}
@@ -143,7 +141,6 @@ const Funding = () => {
               </button>
             </div>
 
-            {/* Recent Donations */}
             <div className="p-6 lg:p-12">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-800 dark:text-white mb-12">
                 Recent Donations
@@ -184,7 +181,7 @@ const Funding = () => {
         </div>
       </div>
 
-      {/* Donation Modal */}
+     
       {showModal && (
         <div className="modal modal-open">
           <div className="modal-box max-w-lg w-full mx-4 bg-base-100 dark:bg-gray-800">
