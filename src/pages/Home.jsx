@@ -13,7 +13,7 @@ const Home = () => {
       </Helmet>
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-        {/* Hero Section */}
+       
         <section className="relative overflow-hidden py-24 md:py-32 lg:py-40">
           <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-700 to-red-800 dark:from-red-800 dark:via-red-900 dark:to-red-950" />
           <div className="relative max-w-7xl mx-auto px-6 text-center text-white">
@@ -40,7 +40,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Why Choose Us */}
+     
         <section className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-800 dark:text-white mb-16">
             Why Choose BloodCare?
@@ -79,7 +79,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* How It Works */}
+        
         <section className="bg-gray-100 dark:bg-gray-800 py-20 lg:py-28">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-800 dark:text-white mb-16">
@@ -108,7 +108,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Contact */}
         <section className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-800 dark:text-white mb-16">
             Contact Us
