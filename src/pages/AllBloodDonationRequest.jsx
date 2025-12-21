@@ -29,7 +29,7 @@ const AllBloodDonationRequest = () => {
           limit: 10,
           status: filters.status || undefined,
           bloodGroup: filters.bloodGroup || undefined,
-          district: filters.district.trim() || undefined, // trim করা
+          district: filters.district.trim() || undefined, 
         },
       });
 
@@ -47,7 +47,7 @@ const AllBloodDonationRequest = () => {
     }
   };
 
-  // Filters change হলে page 1 থেকে fetch
+ 
   useEffect(() => {
     fetchRequests(1);
   }, [filters]);
@@ -153,7 +153,7 @@ const AllBloodDonationRequest = () => {
               </div>
             ) : (
               <>
-                {/* Desktop Table */}
+                
                 <div className="hidden lg:block overflow-x-auto mb-10">
                   <table className="table table-zebra w-full">
                     <thead>
