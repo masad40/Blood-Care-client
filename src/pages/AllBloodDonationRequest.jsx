@@ -222,7 +222,6 @@ const AllBloodDonationRequest = () => {
                   </table>
                 </div>
 
-                {/* Mobile & Tablet Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
                   {requests.map((req) => (
                     <div
@@ -291,7 +290,6 @@ const AllBloodDonationRequest = () => {
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {pagination.totalPages > 1 && (
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12">
                     <button

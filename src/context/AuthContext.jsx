@@ -17,18 +17,17 @@ const auth = getAuth(app);
 const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState("donor"); // default
+  const [role, setRole] = useState("donor");
 
-  // Firebase auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
 
       if (currentUser) {
-        // user logged in → fetch role
+     
         fetchUserRole(currentUser.email);
       } else {
-        // no user → default donor
+        
         setRole("donor");
         setLoading(false);
       }
@@ -37,16 +36,16 @@ const AuthContextProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Role fetch function
+  
   const fetchUserRole = async (email) => {
     try {
       const res = await axios.get(`https://blood-donation-server-tan.vercel.app/users/role/${email}`);
       const fetchedRole = res.data?.role || "donor";
       setRole(fetchedRole);
-      console.log("Fetched role from backend:", fetchedRole); // debug
+      // console.log("Fetched role from backend:", fetchedRole); 
     } catch (err) {
       console.error("Role fetch error:", err);
-      setRole("donor"); // fallback
+      setRole("donor"); 
     } finally {
       setLoading(false);
     }
