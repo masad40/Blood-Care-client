@@ -51,7 +51,7 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        index: true, // "/dashboard" এ গেলে এটা দেখাবে
+        index: true, // "/dashboard" এ 
         element: <Dashboard />,
       },
       {
