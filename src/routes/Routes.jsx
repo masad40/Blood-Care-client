@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "createRequest", // "/dashboard/createRequest"
+        path: "createRequest", 
         element: <CreateDonationRequest />,
       },
       { path: "all-users", element: <AllUsers></AllUsers> },
