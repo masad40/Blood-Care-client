@@ -73,7 +73,7 @@ export const router = createBrowserRouter([
         element: <RequestDetails></RequestDetails>,
       },
       {
-        path: "updateProfile", // "/dashboard/updateProfile"
+        path: "updateProfile", 
         element: <UpdateProfile />,
       },
       {
