@@ -118,7 +118,6 @@ const MyDonationRequest = () => {
                 </div>
               ) : (
                 <>
-                  {/* Desktop Table */}
                   <div className="hidden lg:block overflow-x-auto mb-12">
                     <table className="table table-zebra w-full text-lg">
                       <thead>
@@ -183,7 +182,6 @@ const MyDonationRequest = () => {
                     </table>
                   </div>
 
-                  {/* Mobile & Tablet Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:hidden">
                     {requests.map((req) => (
                       <div
@@ -246,7 +244,6 @@ const MyDonationRequest = () => {
                     ))}
                   </div>
 
-                  {/* Pagination */}
                   {pagination.totalPages > 1 && (
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12">
                       <button

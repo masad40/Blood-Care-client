@@ -113,10 +113,9 @@ const SearchDonors = () => {
             </p>
           </div>
 
-          {/* Search Form */}
           <div className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl p-8 lg:p-12 mb-16">
             <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {/* Blood Group */}
+             
               <div>
                 <label className="label text-lg font-semibold">
                   Blood Group <span className="text-red-500">*</span>
@@ -135,8 +134,6 @@ const SearchDonors = () => {
                   ))}
                 </select>
               </div>
-
-              {/* District */}
               <div>
                 <label className="label text-lg font-semibold">
                   District <span className="text-red-500">*</span>
@@ -155,8 +152,6 @@ const SearchDonors = () => {
                   ))}
                 </select>
               </div>
-
-              {/* Upazila */}
               <div>
                 <label className="label text-lg font-semibold">
                   Upazila <span className="text-red-500">*</span>
@@ -198,8 +193,6 @@ const SearchDonors = () => {
               </div>
             </form>
           </div>
-
-          {/* Results */}
           {loading ? (
             <div className="flex justify-center py-20">
               <span className="loading loading-spinner loading-lg text-red-600"></span>

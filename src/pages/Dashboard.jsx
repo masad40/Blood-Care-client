@@ -126,7 +126,7 @@ const Dashboard = () => {
                   You haven't created any donation requests yet.
                 </p>
                 <Link
-                  to="/dashboard/create-donation-request"
+                  to="/dashboard/createRequest"
                   className="btn btn-error btn-lg text-xl px-12 py-5 shadow-xl hover:shadow-2xl transition"
                 >
                   Create Your First Request
@@ -134,10 +134,10 @@ const Dashboard = () => {
               </div>
             ) : (
               <>
-                {/* ✅ FIXED DESKTOP TABLE - NO OVERFLOW */}
+               
                 <div className="hidden lg:block">
                   <div className="overflow-x-auto bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl mb-12 max-w-full">
-                    <div className="min-w-[900px]"> {/* Minimum width for proper display */}
+                    <div className="min-w-[900px]"> 
                       <table className="table table-zebra w-full">
                         <thead>
                           <tr className="bg-red-100 dark:bg-red-900/30 text-lg">

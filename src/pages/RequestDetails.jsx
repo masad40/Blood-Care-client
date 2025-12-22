@@ -217,7 +217,7 @@ const RequestDetails = () => {
         </div>
       </div>
 
-      {/* Donation Confirmation Modal */}
+    
       {showDonateModal && (
         <div className="modal modal-open">
           <div className="modal-box max-w-lg bg-white dark:bg-gray-800">

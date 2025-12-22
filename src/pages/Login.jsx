@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const { signInUser } = useContext(AuthContext);
@@ -22,7 +23,10 @@ const Login = () => {
     const password = e.target.password.value;
 
     signInUser(email, password)
-      .then(() => navigate(from, { replace: true }))
+      .then(() => {
+        navigate(from, { replace: true })
+        toast.success("Login Successful")
+      })
       .catch(() => setError("Invalid email or password. Please try again."));
   };
 
