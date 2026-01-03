@@ -9,7 +9,7 @@ BloodCare is a **MERN stack** based blood donation platform that connects blood 
 
 ## Admin Credentials (For Testing)
 - **Email:** tasnifmasad40@gmail.com
-- **Password:** Admin@123
+- **Password:** admin9427
 
 ## Key Features
 ### Public Features
