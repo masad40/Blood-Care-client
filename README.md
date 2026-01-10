@@ -8,8 +8,8 @@ BloodCare is a **MERN stack** based blood donation platform that connects blood 
 🔗 **Live Link:** https://blood-care-a11.netlify.app/
 
 ## Admin Credentials (For Testing)
-- **Email:** admin@bloodcare.com  
-- **Password:** Admin@123
+- **Email:** tasnifmasad40@gmail.com
+- **Password:** admin9427
 
 ## Key Features
 ### Public Features
