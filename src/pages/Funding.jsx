@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
@@ -22,7 +22,6 @@ const Funding = () => {
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
-
     if (authLoading) return;
 
     if (!user) {
@@ -96,6 +95,14 @@ const Funding = () => {
     }
   };
 
+  // Skeleton Loader
+  const SkeletonRow = () => (
+    <tr className="animate-pulse">
+      <td><div className="h-6 bg-base-300 rounded w-3/4"></div></td>
+      <td><div className="h-6 bg-base-300 rounded w-32"></div></td>
+      <td><div className="h-6 bg-base-300 rounded w-40"></div></td>
+    </tr>
+  );
 
   if (authLoading || pageLoading) {
     return (
@@ -108,30 +115,31 @@ const Funding = () => {
   return (
     <>
       <Helmet>
-        <title>BloodCare | Support Our Mission - Donate</title>
-        <meta name="description" content="Support BloodCare Foundation by donating. Every contribution helps organize blood drives and save lives in Bangladesh." />
+        <title>Support BloodCare | Donate Now</title>
+        <meta name="description" content="Support BloodCare Foundation by donating. Every contribution helps save lives." />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-        
-            <div className="bg-gradient-to-r from-red-600 to-pink-600 px-6 py-12 text-center">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-                Support BloodCare Foundation
+            {/* Header */}
+            <div className="bg-gradient-to-r from-red-600 to-pink-600 px-6 py-16 text-center text-white">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6">
+                Support BloodCare Mission
               </h1>
-              <p className="text-lg sm:text-xl text-red-100 max-w-3xl mx-auto mb-10 opacity-90">
-                Every donation helps us organize blood drives, raise awareness, and save lives across Bangladesh.
+              <p className="text-lg sm:text-xl max-w-3xl mx-auto mb-10 opacity-90">
+                Your donation helps us organize blood drives, raise awareness, and save lives across Bangladesh.
               </p>
 
-              <div className="inline-block bg-white/20 backdrop-blur-lg rounded-3xl px-8 py-8 w-full max-w-md mx-auto">
-                <div className="stat-title text-white text-xl sm:text-2xl mb-2">Total Collected</div>
-                <div className="stat-value text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white">
+              <div className="inline-block bg-white/20 backdrop-blur-lg rounded-3xl px-12 py-10">
+                <div className="stat-title text-white text-2xl mb-2">Total Collected</div>
+                <div className="stat-value text-5xl sm:text-6xl font-extrabold">
                   ৳{totalFunding.toLocaleString()}
                 </div>
               </div>
             </div>
 
+            {/* Donate Button */}
             <div className="text-center py-12 bg-gray-100 dark:bg-gray-700">
               <button
                 onClick={() => setShowModal(true)}
@@ -141,6 +149,7 @@ const Funding = () => {
               </button>
             </div>
 
+            {/* Recent Donations */}
             <div className="p-6 lg:p-12">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-800 dark:text-white mb-12">
                 Recent Donations
@@ -149,7 +158,7 @@ const Funding = () => {
               {fundings.length === 0 ? (
                 <div className="text-center py-20">
                   <p className="text-2xl sm:text-3xl text-gray-600 dark:text-gray-400">
-                    No donations recorded yet. Be the first to contribute!
+                    No donations yet. Be the first to contribute!
                   </p>
                 </div>
               ) : (
@@ -157,7 +166,7 @@ const Funding = () => {
                   <table className="table table-zebra w-full text-base sm:text-lg">
                     <thead>
                       <tr className="bg-red-100 dark:bg-red-900/30">
-                        <th>Donor Name</th>
+                        <th>Donor</th>
                         <th>Amount</th>
                         <th>Date</th>
                       </tr>
@@ -181,7 +190,7 @@ const Funding = () => {
         </div>
       </div>
 
-     
+      {/* Donation Modal */}
       {showModal && (
         <div className="modal modal-open">
           <div className="modal-box max-w-lg w-full mx-4 bg-base-100 dark:bg-gray-800">
@@ -227,11 +236,19 @@ const Funding = () => {
               <div className="modal-action flex flex-col sm:flex-row gap-4">
                 <button
                   type="submit"
-                  disabled={!stripe || !amount}
+                  disabled={!stripe || !amount || isSubmitting}
                   className="btn btn-error btn-lg w-full text-lg font-bold"
                 >
-                  Complete Donation
+                  {isSubmitting ? (
+                    <>
+                      <span className="loading loading-spinner"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    "Complete Donation"
+                  )}
                 </button>
+
                 <button
                   type="button"
                   onClick={() => {

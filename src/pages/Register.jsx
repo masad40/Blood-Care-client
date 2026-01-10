@@ -1,9 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
+
+const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 const Register = () => {
   const { createUser, updateProfileInfo } = useContext(AuthContext);
@@ -12,32 +14,52 @@ const Register = () => {
   const [districts, setDistricts] = useState([]);
   const [allUpazilas, setAllUpazilas] = useState([]);
   const [filteredUpazilas, setFilteredUpazilas] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  /* ---------------- FETCH LOCATION DATA ---------------- */
   useEffect(() => {
-    fetch("/districts.json")
-      .then((res) => res.json())
-      .then((data) => setDistricts(data.districts || []));
+    const loadLocations = async () => {
+      try {
+        const [districtRes, upazilaRes] = await Promise.all([
+          fetch("/districts.json").then((res) => res.json()),
+          fetch("/upazilas.json").then((res) => res.json()),
+        ]);
 
-    fetch("/upazilas.json")
-      .then((res) => res.json())
-      .then((data) => setAllUpazilas(data.upazilas || []));
+        setDistricts(districtRes?.districts || []);
+        setAllUpazilas(upazilaRes?.upazilas || []);
+      } catch {
+        toast.error("Failed to load location data");
+      }
+    };
+
+    loadLocations();
   }, []);
 
-  const handleDistrictChange = (e) => {
-    const districtName = e.target.value;
-    const district = districts.find((d) => d.name === districtName);
-    if (district) {
-      const filtered = allUpazilas.filter((u) => u.district_id === district.id);
-      setFilteredUpazilas(filtered);
-    } else {
-      setFilteredUpazilas([]);
-    }
-  };
+  /* ---------------- DISTRICT CHANGE ---------------- */
+  const handleDistrictChange = useCallback(
+    (e) => {
+      const selectedName = e.target.value;
+      const district = districts.find((d) => d.name === selectedName);
 
+      if (!district) {
+        setFilteredUpazilas([]);
+        return;
+      }
+
+      const matchedUpazilas = allUpazilas.filter(
+        (u) => u.district_id === district.id
+      );
+      setFilteredUpazilas(matchedUpazilas);
+    },
+    [districts, allUpazilas]
+  );
+
+  /* ---------------- REGISTER HANDLER ---------------- */
   const handleRegister = async (e) => {
     e.preventDefault();
-    const form = e.target;
+    if (loading) return;
 
+    const form = e.target;
     const name = form.name.value.trim();
     const email = form.email.value.trim();
     const password = form.password.value;
@@ -57,7 +79,15 @@ const Register = () => {
       return;
     }
 
+    if (!image) {
+      toast.error("Profile photo is required");
+      return;
+    }
+
     try {
+      setLoading(true);
+
+      /* -------- IMAGE UPLOAD -------- */
       const formData = new FormData();
       formData.append("image", image);
 
@@ -66,11 +96,14 @@ const Register = () => {
         formData
       );
 
-      const photoURL = imgRes.data.data.display_url;
+      const photoURL = imgRes?.data?.data?.display_url;
+      if (!photoURL) throw new Error("Image upload failed");
 
+      /* -------- AUTH -------- */
       await createUser(email, password);
       await updateProfileInfo(name, photoURL);
 
+      /* -------- SAVE USER -------- */
       const userInfo = {
         name,
         email,
@@ -82,12 +115,17 @@ const Register = () => {
         status: "active",
       };
 
-      await axios.post("https://blood-donation-server-tan.vercel.app/users", userInfo);
+      await axios.post(
+        "https://blood-donation-server-tan.vercel.app/users",
+        userInfo
+      );
 
       toast.success("Registration successful! Welcome to BloodCare 🩸");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.message || "Registration failed. Please try again.");
+      toast.error(error?.message || "Registration failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,178 +135,124 @@ const Register = () => {
         <title>BloodCare | Register as Donor</title>
         <meta
           name="description"
-          content="Join BloodCare as a blood donor. Register with your details and help save lives in your community."
+          content="Register as a blood donor on BloodCare and help save lives."
         />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center px-4 py-12">
-        <div className="card w-full max-w-2xl bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950">
+        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
+
+          {/* HEADER */}
           <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-              Register as Donor
-            </h1>
-            <p className="text-xl text-red-100">
+            <h1 className="text-4xl font-bold text-white">Register as Donor</h1>
+            <p className="mt-2 text-lg text-red-100">
               Join our community and help save lives
             </p>
           </div>
 
-          <div className="card-body p-8 lg:p-12 -mt-6">
+          {/* FORM */}
+          <div className="p-8 lg:p-12 -mt-6">
             <form onSubmit={handleRegister} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="label text-lg font-semibold">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Your full name"
-                    className="input input-bordered w-full text-lg rounded-xl"
-                    required
-                  />
-                </div>
 
-                <div>
-                  <label className="label text-lg font-semibold">
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    className="input input-bordered w-full text-lg rounded-xl"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="label text-lg font-semibold">
-                  Profile Photo <span className="text-red-500">*</span>
-                </label>
+              {/* BASIC INFO */}
+              <div className="grid md:grid-cols-2 gap-6">
                 <input
-                  type="file"
-                  name="avatar"
-                  accept="image/*"
-                  className="file-input file-input-bordered w-full rounded-xl text-lg"
+                  name="name"
+                  placeholder="Full Name"
+                  className="input input-bordered rounded-xl"
+                  required
+                />
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Email Address"
+                  className="input input-bordered rounded-xl"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="label text-lg font-semibold">
-                    Blood Group <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="bloodGroup"
-                    className="select select-bordered w-full text-lg rounded-xl"
-                    defaultValue=""
-                    required
-                  >
-                    <option value="" disabled>
-                      Select
-                    </option>
-                    {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
-                      <option key={bg} value={bg}>
-                        {bg}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              {/* IMAGE */}
+              <input
+                type="file"
+                name="avatar"
+                accept="image/*"
+                className="file-input file-input-bordered rounded-xl w-full"
+                required
+              />
 
-                <div>
-                  <label className="label text-lg font-semibold">
-                    District <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="district"
-                    onChange={handleDistrictChange}
-                    className="select select-bordered w-full text-lg rounded-xl"
-                    defaultValue=""
-                    required
-                  >
-                    <option value="" disabled>
-                      Select District
-                    </option>
-                    {districts.map((d) => (
-                      <option key={d.id} value={d.name}>
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              {/* LOCATION & BLOOD */}
+              <div className="grid md:grid-cols-3 gap-6">
+                <select name="bloodGroup" required className="select select-bordered rounded-xl">
+                  <option value="" disabled selected>
+                    Blood Group
+                  </option>
+                  {BLOOD_GROUPS.map((bg) => (
+                    <option key={bg}>{bg}</option>
+                  ))}
+                </select>
 
-                <div>
-                  <label className="label text-lg font-semibold">
-                    Upazila <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="upazila"
-                    className="select select-bordered w-full text-lg rounded-xl"
-                    defaultValue=""
-                    required
-                    disabled={filteredUpazilas.length === 0}
-                  >
-                    <option value="" disabled>
-                      {filteredUpazilas.length === 0 ? "Select district first" : "Select Upazila"}
-                    </option>
-                    {filteredUpazilas.map((u) => (
-                      <option key={u.id} value={u.name}>
-                        {u.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  name="district"
+                  onChange={handleDistrictChange}
+                  required
+                  className="select select-bordered rounded-xl"
+                >
+                  <option value="" disabled selected>
+                    District
+                  </option>
+                  {districts.map((d) => (
+                    <option key={d.id}>{d.name}</option>
+                  ))}
+                </select>
+
+                <select
+                  name="upazila"
+                  disabled={!filteredUpazilas.length}
+                  required
+                  className="select select-bordered rounded-xl"
+                >
+                  <option value="" disabled selected>
+                    {filteredUpazilas.length ? "Upazila" : "Select district first"}
+                  </option>
+                  {filteredUpazilas.map((u) => (
+                    <option key={u.id}>{u.name}</option>
+                  ))}
+                </select>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="label text-lg font-semibold">
-                    Password <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="••••••••"
-                    className="input input-bordered w-full text-lg rounded-xl"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="label text-lg font-semibold">
-                    Confirm Password <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="••••••••"
-                    className="input input-bordered w-full text-lg rounded-xl"
-                    required
-                  />
-                </div>
+              {/* PASSWORD */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  className="input input-bordered rounded-xl"
+                  required
+                />
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm Password"
+                  className="input input-bordered rounded-xl"
+                  required
+                />
               </div>
 
+              {/* SUBMIT */}
               <button
-                type="submit"
-                className="btn btn-error btn-lg w-full text-xl font-bold py-5 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 rounded-2xl"
+                disabled={loading}
+                className="btn btn-error btn-lg w-full rounded-2xl text-xl font-bold"
               >
-                Register as Donor
+                {loading ? "Creating Account..." : "Register as Donor"}
               </button>
             </form>
 
-            <div className="mt-8 text-center">
-              <p className="text-lg text-gray-600 dark:text-gray-300">
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  className="font-bold text-red-600 dark:text-red-500 hover:underline transition"
-                >
-                  Log in here
-                </Link>
-              </p>
-            </div>
+            <p className="mt-8 text-center text-gray-600 dark:text-gray-300">
+              Already have an account?{" "}
+              <Link to="/login" className="font-bold text-red-600 hover:underline">
+                Login here
+              </Link>
+            </p>
           </div>
         </div>
       </div>

@@ -7,38 +7,57 @@ import { Link } from "react-router-dom";
 
 const AllBloodDonationRequest = () => {
   const { role } = useContext(AuthContext);
+
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [districts, setDistricts] = useState([]);
+
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
     totalRequests: 0,
   });
+
   const [filters, setFilters] = useState({
     status: "",
     bloodGroup: "",
     district: "",
   });
 
+  // Load districts
+  useEffect(() => {
+    fetch("/districts.json")
+      .then((res) => res.json())
+      .then((data) => setDistricts(data.districts || []))
+      .catch((err) => console.error("Failed to load districts:", err));
+  }, []);
+
   const fetchRequests = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axios.get("https://blood-donation-server-tan.vercel.app/donation-requests", {
-        params: {
-          page,
-          limit: 10,
-          status: filters.status || undefined,
-          bloodGroup: filters.bloodGroup || undefined,
-          district: filters.district.trim() || undefined, 
-        },
-      });
+      const res = await axios.get(
+        "https://blood-donation-server-tan.vercel.app/donation-requests",
+        {
+          params: {
+            page,
+            limit: 10,
+            status: filters.status || undefined,
+            bloodGroup: filters.bloodGroup || undefined,
+            district: filters.district
+              ? filters.district.trim()
+              : undefined,
+          },
+        }
+      );
 
       setRequests(res.data.requests || []);
-      setPagination(res.data.pagination || {
-        currentPage: 1,
-        totalPages: 1,
-        totalRequests: 0,
-      });
+      setPagination(
+        res.data.pagination || {
+          currentPage: 1,
+          totalPages: 1,
+          totalRequests: 0,
+        }
+      );
     } catch (err) {
       toast.error("Failed to load requests");
       console.error(err);
@@ -47,7 +66,6 @@ const AllBloodDonationRequest = () => {
     }
   };
 
- 
   useEffect(() => {
     fetchRequests(1);
   }, [filters]);
@@ -59,9 +77,10 @@ const AllBloodDonationRequest = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await axios.patch(`https://blood-donation-server-tan.vercel.app/donation-requests/${id}/status`, {
-        status: newStatus,
-      });
+      await axios.patch(
+        `https://blood-donation-server-tan.vercel.app/donation-requests/${id}/status`,
+        { status: newStatus }
+      );
       toast.success("Status updated successfully!");
       fetchRequests(pagination.currentPage);
     } catch (err) {
@@ -71,8 +90,11 @@ const AllBloodDonationRequest = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this request?")) return;
+
     try {
-      await axios.delete(`https://blood-donation-server-tan.vercel.app/donation-requests/${id}`);
+      await axios.delete(
+        `https://blood-donation-server-tan.vercel.app/donation-requests/${id}`
+      );
       toast.success("Request deleted successfully");
       fetchRequests(pagination.currentPage);
     } catch (err) {
@@ -110,10 +132,13 @@ const AllBloodDonationRequest = () => {
           </div>
 
           <div className="p-6 lg:p-10">
+            {/* Filters */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
               <select
                 value={filters.status}
-                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, status: e.target.value })
+                }
                 className="select select-bordered w-full"
               >
                 <option value="">All Status</option>
@@ -125,24 +150,35 @@ const AllBloodDonationRequest = () => {
 
               <select
                 value={filters.bloodGroup}
-                onChange={(e) => setFilters({ ...filters, bloodGroup: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, bloodGroup: e.target.value })
+                }
                 className="select select-bordered w-full"
               >
                 <option value="">All Blood Groups</option>
-                {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
-                  <option key={bg} value={bg}>
-                    {bg}
+                {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(
+                  (bg) => (
+                    <option key={bg} value={bg}>
+                      {bg}
+                    </option>
+                  )
+                )}
+              </select>
+
+              <select
+                value={filters.district}
+                onChange={(e) =>
+                  setFilters({ ...filters, district: e.target.value })
+                }
+                className="select select-bordered w-full"
+              >
+                <option value="">All Districts</option>
+                {districts.map((d) => (
+                  <option key={d.id} value={d.name}>
+                    {d.name}
                   </option>
                 ))}
               </select>
-
-              <input
-                type="text"
-                placeholder="Search by district (e.g., Dhaka)"
-                value={filters.district}
-                onChange={(e) => setFilters({ ...filters, district: e.target.value })}
-                className="input input-bordered w-full"
-              />
             </div>
 
             {requests.length === 0 ? (
@@ -153,7 +189,7 @@ const AllBloodDonationRequest = () => {
               </div>
             ) : (
               <>
-                
+                {/* Desktop Table */}
                 <div className="hidden lg:block overflow-x-auto mb-10">
                   <table className="table table-zebra w-full">
                     <thead>
@@ -168,18 +204,28 @@ const AllBloodDonationRequest = () => {
                     </thead>
                     <tbody>
                       {requests.map((req) => (
-                        <tr key={req._id} className="hover:bg-red-50 dark:hover:bg-red-900/20">
+                        <tr key={req._id}>
                           <td>
-                            <div className="font-bold">{req.recipientName}</div>
-                            <div className="text-sm opacity-70">by {req.requesterName || "Unknown"}</div>
+                            <div className="font-bold">
+                              {req.recipientName}
+                            </div>
+                            <div className="text-sm opacity-70">
+                              by {req.requesterName || "Unknown"}
+                            </div>
                           </td>
                           <td>
-                            <div>{req.upazila}, {req.district}</div>
-                            <div className="text-sm opacity-70">{req.hospital}</div>
+                            {req.upazila}, {req.district}
+                            <div className="text-sm opacity-70">
+                              {req.hospital}
+                            </div>
                           </td>
                           <td>
-                            <div>{new Date(req.donationDate).toLocaleDateString("en-GB")}</div>
-                            <div className="text-sm opacity-70">{req.donationTime}</div>
+                            {new Date(req.donationDate).toLocaleDateString(
+                              "en-GB"
+                            )}
+                            <div className="text-sm opacity-70">
+                              {req.donationTime}
+                            </div>
                           </td>
                           <td>
                             <span className="badge badge-error badge-lg text-white font-bold">
@@ -189,7 +235,12 @@ const AllBloodDonationRequest = () => {
                           <td>
                             <select
                               value={req.status}
-                              onChange={(e) => handleStatusChange(req._id, e.target.value)}
+                              onChange={(e) =>
+                                handleStatusChange(
+                                  req._id,
+                                  e.target.value
+                                )
+                              }
                               className="select select-sm w-full"
                             >
                               <option value="pending">Pending</option>
@@ -198,23 +249,21 @@ const AllBloodDonationRequest = () => {
                               <option value="canceled">Canceled</option>
                             </select>
                           </td>
-                          <td>
-                            <div className="flex gap-2">
-                              <Link
-                                to={`/dashboard/request-details/${req._id}`}
-                                className="btn btn-sm btn-info"
+                          <td className="flex gap-2">
+                            <Link
+                              to={`/dashboard/request-details/${req._id}`}
+                              className="btn btn-sm btn-info"
+                            >
+                              View
+                            </Link>
+                            {role === "admin" && (
+                              <button
+                                onClick={() => handleDelete(req._id)}
+                                className="btn btn-sm btn-error"
                               >
-                                View
-                              </Link>
-                              {role === "admin" && (
-                                <button
-                                  onClick={() => handleDelete(req._id)}
-                                  className="btn btn-sm btn-error"
-                                >
-                                  Delete
-                                </button>
-                              )}
-                            </div>
+                                Delete
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -222,91 +271,30 @@ const AllBloodDonationRequest = () => {
                   </table>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
-                  {requests.map((req) => (
-                    <div
-                      key={req._id}
-                      className="card bg-base-200 dark:bg-gray-700 shadow-xl hover:shadow-2xl transition-shadow"
-                    >
-                      <div className="card-body">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="text-xl font-bold">{req.recipientName}</h3>
-                            <p className="text-sm opacity-70">by {req.requesterName || "Unknown"}</p>
-                          </div>
-                          <span className="badge badge-error badge-lg text-white font-bold">
-                            {req.bloodGroup}
-                          </span>
-                        </div>
-
-                        <div className="space-y-2 text-sm">
-                          <p>
-                            <strong>Location:</strong> {req.upazila}, {req.district}
-                          </p>
-                          <p>
-                            <strong>Hospital:</strong> {req.hospital}
-                          </p>
-                          <p>
-                            <strong>Date:</strong>{" "}
-                            {new Date(req.donationDate).toLocaleDateString("en-GB")}
-                          </p>
-                          <p>
-                            <strong>Time:</strong> {req.donationTime}
-                          </p>
-                        </div>
-
-                        <div className="mt-6">
-                          <label className="label font-semibold">Status</label>
-                          <select
-                            value={req.status}
-                            onChange={(e) => handleStatusChange(req._id, e.target.value)}
-                            className="select select-bordered w-full"
-                          >
-                            <option value="pending">Pending</option>
-                            <option value="inprogress">In Progress</option>
-                            <option value="done">Done</option>
-                            <option value="canceled">Canceled</option>
-                          </select>
-                        </div>
-
-                        <div className="card-actions justify-between mt-6">
-                          <Link
-                            to={`/dashboard/request-details/${req._id}`}
-                            className="btn btn-info btn-block md:btn-wide"
-                          >
-                            View Details
-                          </Link>
-                          {role === "admin" && (
-                            <button
-                              onClick={() => handleDelete(req._id)}
-                              className="btn btn-error btn-block md:btn-wide mt-2 md:mt-0"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
+                {/* Pagination */}
                 {pagination.totalPages > 1 && (
-                  <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12">
+                  <div className="flex justify-center gap-4 mt-12">
                     <button
-                      onClick={() => handlePageChange(pagination.currentPage - 1)}
+                      onClick={() =>
+                        handlePageChange(pagination.currentPage - 1)
+                      }
                       disabled={pagination.currentPage === 1}
                       className="btn btn-outline btn-error"
                     >
                       Previous
                     </button>
-
                     <span className="text-lg font-medium">
-                      Page {pagination.currentPage} of {pagination.totalPages}
+                      Page {pagination.currentPage} of{" "}
+                      {pagination.totalPages}
                     </span>
-
                     <button
-                      onClick={() => handlePageChange(pagination.currentPage + 1)}
-                      disabled={pagination.currentPage === pagination.totalPages}
+                      onClick={() =>
+                        handlePageChange(pagination.currentPage + 1)
+                      }
+                      disabled={
+                        pagination.currentPage ===
+                        pagination.totalPages
+                      }
                       className="btn btn-outline btn-error"
                     >
                       Next

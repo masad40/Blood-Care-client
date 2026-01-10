@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const UpdateProfile = () => {
   const { user, updateProfileInfo } = useContext(AuthContext);
@@ -10,18 +11,56 @@ const UpdateProfile = () => {
 
   const [name, setName] = useState(user?.displayName || "");
   const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
+  const [bloodGroup, setBloodGroup] = useState(user?.bloodGroup || "");
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  // ImgBB API key (তোমার .env বা config থেকে নিয়ে দাও)
+  const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_KEY || "your-imgbb-api-key";
+
+  // ছবি আপলোড হ্যান্ডলার
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
+        formData
+      );
+
+      const imageUrl = res.data.data.display_url;
+      setPhotoURL(imageUrl);
+      toast.success("Image uploaded successfully!");
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast.error("Failed to upload image. Try again.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
     if (!name.trim()) {
       toast.error("Name is required");
       return;
     }
 
+    if (!bloodGroup) {
+      toast.error("Please select a blood group");
+      return;
+    }
+
     setLoading(true);
     try {
-      await updateProfileInfo(name.trim(), photoURL.trim());
+      await updateProfileInfo(name.trim(), photoURL.trim(), bloodGroup);
       toast.success("Profile updated successfully! 🩸");
       navigate("/dashboard/profile");
     } catch (err) {
@@ -38,7 +77,7 @@ const UpdateProfile = () => {
         <title>BloodCare | Update Profile</title>
         <meta
           name="description"
-          content="Update your profile information including name and photo to help others recognize you as a donor."
+          content="Update your profile information including name, blood group and photo."
         />
       </Helmet>
 
@@ -58,18 +97,23 @@ const UpdateProfile = () => {
               <div className="avatar mb-6">
                 <div className="w-32 rounded-full ring ring-red-500 ring-offset-base-100 ring-offset-4 shadow-2xl">
                   <img
-                    src={photoURL || user?.photoURL || "https://i.ibb.co/Q3LYhjtx/pngtree-user-icon-png-image-1796659.jpg"}
+                    src={
+                      photoURL ||
+                      user?.photoURL ||
+                      "https://i.ibb.co/Q3LYhjtx/pngtree-user-icon-png-image-1796659.jpg"
+                    }
                     alt="Profile Preview"
                     className="object-cover"
                   />
                 </div>
               </div>
               <p className="text-lg text-gray-600 dark:text-gray-400 text-center">
-                Current photo preview. Enter a new URL to change it.
+                Current photo preview. Upload a new image to change it.
               </p>
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-8">
+              {/* Full Name */}
               <div>
                 <label className="label text-xl font-semibold text-gray-800 dark:text-gray-200">
                   Full Name <span className="text-red-500">*</span>
@@ -84,32 +128,53 @@ const UpdateProfile = () => {
                 />
               </div>
 
+              {/* Blood Group */}
               <div>
                 <label className="label text-xl font-semibold text-gray-800 dark:text-gray-200">
-                  Photo URL
+                  Blood Group <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="url"
-                  value={photoURL}
-                  onChange={(e) => setPhotoURL(e.target.value)}
-                  placeholder="https://example.com/your-photo.jpg"
-                  className="input input-bordered w-full text-xl px-6 py-5 rounded-2xl bg-gray-50 dark:bg-gray-700 focus:border-red-500 focus:ring-4 focus:ring-red-500/20 transition"
-                />
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
-                  Paste a direct link to your photo (e.g., from Imgur, Facebook, etc.)
-                </p>
+                <select
+                  value={bloodGroup}
+                  onChange={(e) => setBloodGroup(e.target.value)}
+                  className="select select-bordered w-full text-xl rounded-2xl bg-gray-50 dark:bg-gray-700 focus:border-red-500 focus:ring-4 focus:ring-red-500/20 transition"
+                  required
+                >
+                  <option value="">Select Blood Group</option>
+                  {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
+                    <option key={bg} value={bg}>
+                      {bg}
+                    </option>
+                  ))}
+                </select>
               </div>
 
+              {/* Image Upload */}
+              <div>
+                <label className="label text-xl font-semibold text-gray-800 dark:text-gray-200">
+                  Upload Profile Photo
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="file-input file-input-bordered w-full text-lg rounded-2xl bg-gray-50 dark:bg-gray-700"
+                  disabled={uploadingImage}
+                />
+                {uploadingImage && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Uploading image...</p>
+                )}
+              </div>
+
+              {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-6 pt-6">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || uploadingImage}
                   className="btn btn-error btn-lg w-full text-xl font-bold py-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 rounded-2xl"
                 >
                   {loading ? (
                     <>
-                      <span className="loading loading-spinner"></span>
-                      Saving...
+                      <span className="loading loading-spinner"></span> Saving...
                     </>
                   ) : (
                     "Save Changes"

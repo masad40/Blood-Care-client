@@ -12,6 +12,7 @@ const EditRequest = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [request, setRequest] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [districts, setDistricts] = useState([]);
   const [allUpazilas, setAllUpazilas] = useState([]);
   const [filteredUpazilas, setFilteredUpazilas] = useState([]);
@@ -21,8 +22,12 @@ const EditRequest = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm();
 
+  const selectedDistrict = watch("recipientDistrict");
+
+  // Load districts & upazilas
   useEffect(() => {
     fetch("/districts.json")
       .then((res) => res.json())
@@ -33,6 +38,7 @@ const EditRequest = () => {
       .then((data) => setAllUpazilas(data.upazilas || []));
   }, []);
 
+  // Fetch single request & populate form
   useEffect(() => {
     const fetchRequest = async () => {
       try {
@@ -47,23 +53,25 @@ const EditRequest = () => {
           return;
         }
 
-        setValue("recipientName", req.recipientName);
-        setValue("bloodGroup", req.bloodGroup);
-        setValue("recipientDistrict", req.district);
-        setValue("recipientUpazila", req.upazila);
-        setValue("hospitalName", req.hospital);
-        setValue("fullAddress", req.fullAddress);
-        setValue("donationDate", req.donationDate.split("T")[0]);
-        setValue("donationTime", req.donationTime);
-        setValue("requestMessage", req.requestMessage);
+        // Populate form fields
+        setValue("recipientName", req.recipientName || "");
+        setValue("bloodGroup", req.bloodGroup || "");
+        setValue("recipientDistrict", req.district || "");
+        setValue("recipientUpazila", req.upazila || "");
+        setValue("hospitalName", req.hospital || "");
+        setValue("fullAddress", req.fullAddress || "");
+        setValue("donationDate", req.donationDate?.split("T")[0] || "");
+        setValue("donationTime", req.donationTime || "");
+        setValue("requestMessage", req.requestMessage || "");
 
+        // Pre-filter upazilas based on saved district
         const districtObj = districts.find((d) => d.name === req.district);
         if (districtObj) {
           const filtered = allUpazilas.filter((u) => u.district_id === districtObj.id);
           setFilteredUpazilas(filtered);
         }
       } catch (err) {
-        toast.error("Failed to load request");
+        toast.error("Failed to load request details");
         navigate("/dashboard/my-donation-requests");
       } finally {
         setLoading(false);
@@ -75,42 +83,51 @@ const EditRequest = () => {
     }
   }, [id, user, districts, allUpazilas, navigate, setValue]);
 
-  const handleDistrictChange = (e) => {
-    const districtName = e.target.value;
-    const district = districts.find((d) => d.name === districtName);
-    if (district) {
-      const filtered = allUpazilas.filter((u) => u.district_id === district.id);
-      setFilteredUpazilas(filtered);
-      setValue("recipientUpazila", "");
-    } else {
-      setFilteredUpazilas([]);
+  // Update upazila list when district changes
+  useEffect(() => {
+    if (selectedDistrict) {
+      const district = districts.find((d) => d.name === selectedDistrict);
+      if (district) {
+        const filtered = allUpazilas.filter((u) => u.district_id === district.id);
+        setFilteredUpazilas(filtered);
+        setValue("recipientUpazila", "");
+      } else {
+        setFilteredUpazilas([]);
+      }
     }
-  };
+  }, [selectedDistrict, districts, allUpazilas, setValue]);
+
+  const minDate = new Date().toISOString().split("T")[0];
 
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
+
     try {
       await axios.patch(`https://blood-donation-server-tan.vercel.app/donation-requests/${id}`, {
-        recipientName: data.recipientName,
+        recipientName: data.recipientName.trim(),
         bloodGroup: data.bloodGroup,
         district: data.recipientDistrict,
         upazila: data.recipientUpazila,
-        hospital: data.hospitalName,
-        fullAddress: data.fullAddress,
+        hospital: data.hospitalName.trim(),
+        fullAddress: data.fullAddress.trim(),
         donationDate: data.donationDate,
         donationTime: data.donationTime,
-        requestMessage: data.requestMessage,
+        requestMessage: data.requestMessage.trim(),
       });
 
-      toast.success("Request updated successfully!");
+      toast.success("Request updated successfully! 🩸");
       navigate("/dashboard/my-donation-requests");
     } catch (err) {
-      toast.error("Failed to update request");
+      const errorMsg = err.response?.data?.message || "Failed to update request";
+      toast.error(errorMsg);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex justify-center items-center min-h-screen">
         <span className="loading loading-spinner loading-lg text-red-600"></span>
       </div>
     );
@@ -118,10 +135,10 @@ const EditRequest = () => {
 
   if (user?.status === "blocked") {
     return (
-      <div className="flex min-h-screen items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
-        <div className="alert alert-error shadow-2xl max-w-2xl text-center p-12 rounded-3xl bg-red-100 dark:bg-red-900/30 border border-red-500 dark:border-red-700">
-          <span className="text-3xl font-bold text-red-700 dark:text-red-300">Account Blocked</span>
-          <p className="mt-6 text-xl text-red-700 dark:text-red-300">You cannot edit donation requests.</p>
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="alert alert-error shadow-2xl max-w-lg text-center p-12 rounded-3xl">
+          <span className="text-3xl font-bold">Account Blocked</span>
+          <p className="mt-6 text-xl">You cannot edit donation requests.</p>
         </div>
       </div>
     );
@@ -130,224 +147,244 @@ const EditRequest = () => {
   return (
     <>
       <Helmet>
-        <title>BloodCare | Edit Donation Request</title>
-        <meta name="description" content="Edit your blood donation request details to help donors find you easily." />
+        <title>Edit Donation Request | BloodCare</title>
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center">
-              <h1 className="text-4xl sm:text-5xl font-bold text-white">
-                Edit Blood Donation Request
-              </h1>
-              <p className="mt-4 text-red-100 text-lg">
-                Update the details to help donors reach you faster.
-              </p>
-            </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="card bg-base-100 dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden">
+          <div className="bg-gradient-to-r from-red-600 to-red-800 px-6 py-12 text-center text-white">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4">
+              Edit Donation Request 🩸
+            </h1>
+            <p className="text-lg md:text-xl opacity-90">
+              Update details to help donors find you faster.
+            </p>
+          </div>
 
-            <div className="p-8 lg:p-12">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-100 dark:bg-gray-700/50 p-6 rounded-2xl">
-                  <div>
-                    <label className="label font-semibold text-gray-700 dark:text-gray-300">
-                      Requester Name
-                    </label>
-                    <input
-                      type="text"
-                      value={request?.requesterName || ""}
-                      readOnly
-                      className="input input-bordered w-full bg-gray-200 dark:bg-gray-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="label font-semibold text-gray-700 dark:text-gray-300">
-                      Requester Email
-                    </label>
-                    <input
-                      type="email"
-                      value={request?.requesterEmail || ""}
-                      readOnly
-                      className="input input-bordered w-full bg-gray-200 dark:bg-gray-600"
-                    />
-                  </div>
+          <div className="card-body p-6 lg:p-12">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              {/* Requester Info - Readonly */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-base-200 dark:bg-gray-700/50 p-6 rounded-2xl">
+                <div>
+                  <label className="label font-semibold">Requester Name</label>
+                  <input
+                    type="text"
+                    value={request?.requesterName || ""}
+                    readOnly
+                    className="input input-bordered w-full bg-base-300 cursor-not-allowed"
+                  />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="label font-semibold">
-                      Recipient Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...register("recipientName", { required: "Recipient name is required" })}
-                      type="text"
-                      className="input input-bordered w-full"
-                    />
-                    {errors.recipientName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.recipientName.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="label font-semibold">
-                      Blood Group <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      {...register("bloodGroup", { required: "Blood group is required" })}
-                      className="select select-bordered w-full"
-                    >
-                      <option value="">Select Blood Group</option>
-                      {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
-                        <option key={bg} value={bg}>
-                          {bg}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.bloodGroup && (
-                      <p className="text-red-500 text-sm mt-1">{errors.bloodGroup.message}</p>
-                    )}
-                  </div>
+                <div>
+                  <label className="label font-semibold">Requester Email</label>
+                  <input
+                    type="email"
+                    value={request?.requesterEmail || ""}
+                    readOnly
+                    className="input input-bordered w-full bg-base-300 cursor-not-allowed"
+                  />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="label font-semibold">
-                      District <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      {...register("recipientDistrict", { required: "District is required" })}
-                      onChange={handleDistrictChange}
-                      className="select select-bordered w-full"
-                    >
-                      <option value="">Select District</option>
-                      {districts.map((d) => (
-                        <option key={d.id} value={d.name}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.recipientDistrict && (
-                      <p className="text-red-500 text-sm mt-1">{errors.recipientDistrict.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="label font-semibold">
-                      Upazila <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      {...register("recipientUpazila", { required: "Upazila is required" })}
-                      className="select select-bordered w-full"
-                      disabled={filteredUpazilas.length === 0}
-                    >
-                      <option value="">
-                        {filteredUpazilas.length === 0 ? "Select district first" : "Select Upazila"}
-                      </option>
-                      {filteredUpazilas.map((u) => (
-                        <option key={u.id} value={u.name}>
-                          {u.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.recipientUpazila && (
-                      <p className="text-red-500 text-sm mt-1">{errors.recipientUpazila.message}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="label font-semibold">
-                      Hospital Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...register("hospitalName", { required: "Hospital name is required" })}
-                      type="text"
-                      className="input input-bordered w-full"
-                    />
-                    {errors.hospitalName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.hospitalName.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="label font-semibold">
-                      Full Address <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...register("fullAddress", { required: "Full address is required" })}
-                      type="text"
-                      className="input input-bordered w-full"
-                    />
-                    {errors.fullAddress && (
-                      <p className="text-red-500 text-sm mt-1">{errors.fullAddress.message}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="label font-semibold">
-                      Donation Date <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...register("donationDate", { required: "Date is required" })}
-                      type="date"
-                      min={new Date().toISOString().split("T")[0]}
-                      className="input input-bordered w-full"
-                    />
-                    {errors.donationDate && (
-                      <p className="text-red-500 text-sm mt-1">{errors.donationDate.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="label font-semibold">
-                      Donation Time <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...register("donationTime", { required: "Time is required" })}
-                      type="time"
-                      className="input input-bordered w-full"
-                    />
-                    {errors.donationTime && (
-                      <p className="text-red-500 text-sm mt-1">{errors.donationTime.message}</p>
-                    )}
-                  </div>
+              {/* Recipient & Blood Group */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="label font-semibold">
+                    Recipient Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("recipientName", {
+                      required: "Recipient name is required",
+                      minLength: { value: 3, message: "Minimum 3 characters" },
+                    })}
+                    type="text"
+                    className="input input-bordered w-full"
+                  />
+                  {errors.recipientName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.recipientName.message}</p>
+                  )}
                 </div>
 
                 <div>
                   <label className="label font-semibold">
-                    Request Message <span className="text-red-500">*</span>
+                    Blood Group <span className="text-red-500">*</span>
                   </label>
-                  <textarea
-                    {...register("requestMessage", { required: "Message is required" })}
-                    rows="8"
-                    className="textarea textarea-bordered w-full resize-none"
-                    placeholder="Describe the patient's condition, urgency, contact info, etc."
-                  />
-                  {errors.requestMessage && (
-                    <p className="text-red-500 text-sm mt-1">{errors.requestMessage.message}</p>
+                  <select
+                    {...register("bloodGroup", { required: "Blood group is required" })}
+                    className="select select-bordered w-full"
+                  >
+                    <option value="">Select Blood Group</option>
+                    {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
+                      <option key={bg} value={bg}>
+                        {bg}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.bloodGroup && (
+                    <p className="text-red-500 text-sm mt-1">{errors.bloodGroup.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Location */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="label font-semibold">
+                    District <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register("recipientDistrict", { required: "District is required" })}
+                    className="select select-bordered w-full"
+                  >
+                    <option value="">Select District</option>
+                    {districts.map((d) => (
+                      <option key={d.id} value={d.name}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.recipientDistrict && (
+                    <p className="text-red-500 text-sm mt-1">{errors.recipientDistrict.message}</p>
                   )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-center gap-6 pt-8">
-                  <button
-                    type="submit"
-                    className="btn btn-error btn-wide btn-lg text-xl font-bold shadow-xl hover:shadow-2xl transition"
+                <div>
+                  <label className="label font-semibold">
+                    Upazila <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register("recipientUpazila", { required: "Upazila is required" })}
+                    className="select select-bordered w-full"
+                    disabled={!filteredUpazilas.length}
                   >
-                    Update Request
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate(-1)}
-                    className="btn btn-ghost btn-wide btn-lg text-xl"
-                  >
-                    Cancel
-                  </button>
+                    <option value="">
+                      {filteredUpazilas.length ? "Select Upazila" : "Select district first"}
+                    </option>
+                    {filteredUpazilas.map((u) => (
+                      <option key={u.id} value={u.name}>
+                        {u.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.recipientUpazila && (
+                    <p className="text-red-500 text-sm mt-1">{errors.recipientUpazila.message}</p>
+                  )}
                 </div>
-              </form>
-            </div>
+              </div>
+
+              {/* Hospital & Address */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="label font-semibold">
+                    Hospital Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("hospitalName", { required: "Hospital name is required" })}
+                    type="text"
+                    className="input input-bordered w-full"
+                  />
+                  {errors.hospitalName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.hospitalName.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="label font-semibold">
+                    Full Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("fullAddress", { required: "Full address is required" })}
+                    type="text"
+                    className="input input-bordered w-full"
+                  />
+                  {errors.fullAddress && (
+                    <p className="text-red-500 text-sm mt-1">{errors.fullAddress.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Date & Time */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="label font-semibold">
+                    Required Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("donationDate", {
+                      required: "Date is required",
+                      min: {
+                        value: minDate,
+                        message: "Date cannot be in the past",
+                      },
+                    })}
+                    type="date"
+                    min={minDate}
+                    className="input input-bordered w-full"
+                  />
+                  {errors.donationDate && (
+                    <p className="text-red-500 text-sm mt-1">{errors.donationDate.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="label font-semibold">
+                    Preferred Time <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("donationTime", { required: "Time is required" })}
+                    type="time"
+                    className="input input-bordered w-full"
+                  />
+                  {errors.donationTime && (
+                    <p className="text-red-500 text-sm mt-1">{errors.donationTime.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Message */}
+              <div>
+                <label className="label font-semibold">
+                  Why Blood is Needed <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  {...register("requestMessage", {
+                    required: "Please describe the requirement",
+                    minLength: { value: 10, message: "Minimum 20 characters" },
+                  })}
+                  rows="6"
+                  placeholder="Patient's condition, urgency, number of bags needed, contact person etc..."
+                  className="textarea textarea-bordered w-full resize-none"
+                />
+                {errors.requestMessage && (
+                  <p className="text-red-500 text-sm mt-1">{errors.requestMessage.message}</p>
+                )}
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row justify-center gap-6 pt-8">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn btn-error btn-lg px-12 font-bold shadow-xl hover:shadow-2xl transition-all"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="loading loading-spinner"></span>
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Request"
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="btn btn-outline btn-lg px-12"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

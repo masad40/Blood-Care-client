@@ -19,6 +19,8 @@ import AllUsers from "../pages/AllUsers";
 import RequestDetails from "../pages/RequestDetails";
 import EditRequest from "../pages/EditRequest";
 import SearchDonors from "../pages/SearchDonors";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
 
 export const router = createBrowserRouter([
   // ==================== Public Routes ====================
@@ -26,7 +28,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: <MainLayout />,
     children: [
-      { index: true, element: <Home /> }, // "/" path
+      { index: true, element: <Home /> }, 
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "donation-requests", element: <DonationRequest /> },
@@ -34,6 +36,14 @@ export const router = createBrowserRouter([
       {
         path:"searchDonors",
         element: <SearchDonors></SearchDonors>
+      },
+      {
+        path: "about",
+        element:<About></About>
+      },
+      {
+        path: "contact",
+        element: <Contact></Contact>
       }
       
      

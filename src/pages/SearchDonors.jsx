@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
+const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
 const SearchDonors = () => {
   const [districts, setDistricts] = useState([]);
   const [allUpazilas, setAllUpazilas] = useState([]);
@@ -16,6 +18,7 @@ const SearchDonors = () => {
     upazila: "",
   });
 
+  // Load districts and upazilas on mount
   useEffect(() => {
     Promise.all([
       fetch("/districts.json").then((res) => res.json()),
@@ -31,9 +34,10 @@ const SearchDonors = () => {
       });
   }, []);
 
+  // Update filtered upazilas on district change
   const handleDistrictChange = (e) => {
-    const districtName = e.target.value.trim();
-    setSearch({ ...search, district: districtName, upazila: "" });
+    const districtName = e.target.value;
+    setSearch((prev) => ({ ...prev, district: districtName, upazila: "" }));
 
     if (!districtName) {
       setFilteredUpazilas([]);
@@ -49,6 +53,7 @@ const SearchDonors = () => {
     }
   };
 
+  // Search donors with validation
   const handleSearch = async (e) => {
     e.preventDefault();
 
@@ -61,13 +66,16 @@ const SearchDonors = () => {
 
     setLoading(true);
     try {
-      const res = await axios.get("https://blood-donation-server-tan.vercel.app/users/search-donors", {
-        params: {
-          bloodGroup: bloodGroup.trim(),
-          district: district.trim(),
-          upazila: upazila.trim(),
-        },
-      });
+      const res = await axios.get(
+        "https://blood-donation-server-tan.vercel.app/users/search-donors",
+        {
+          params: {
+            bloodGroup: bloodGroup.trim(),
+            district: district.trim(),
+            upazila: upazila.trim(),
+          },
+        }
+      );
 
       const foundDonors = res.data.donors || [];
       setDonors(foundDonors);
@@ -86,6 +94,7 @@ const SearchDonors = () => {
     }
   };
 
+  // Reset all search fields and results
   const resetSearch = () => {
     setSearch({ bloodGroup: "", district: "", upazila: "" });
     setFilteredUpazilas([]);
@@ -104,41 +113,48 @@ const SearchDonors = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <header className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-red-600 dark:text-red-500 mb-6">
               🔍 Search for Blood Donors
             </h1>
             <p className="text-xl sm:text-2xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
               Find available donors near you instantly and help save a life today.
             </p>
-          </div>
+          </header>
 
-          <div className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl p-8 lg:p-12 mb-16">
-            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-             
+          <section className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl p-8 lg:p-12 mb-16">
+            <form
+              onSubmit={handleSearch}
+              className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
+              {/* Blood Group Select */}
               <div>
-                <label className="label text-lg font-semibold">
+                <label htmlFor="bloodGroup" className="label text-lg font-semibold">
                   Blood Group <span className="text-red-500">*</span>
                 </label>
                 <select
+                  id="bloodGroup"
                   value={search.bloodGroup}
-                  onChange={(e) => setSearch({ ...search, bloodGroup: e.target.value })}
+                  onChange={(e) => setSearch((prev) => ({ ...prev, bloodGroup: e.target.value }))}
                   className="select select-bordered w-full text-lg rounded-xl"
                   required
                 >
                   <option value="">Select Blood Group</option>
-                  {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
+                  {BLOOD_GROUPS.map((bg) => (
                     <option key={bg} value={bg}>
                       {bg}
                     </option>
                   ))}
                 </select>
               </div>
+
+              {/* District Select */}
               <div>
-                <label className="label text-lg font-semibold">
+                <label htmlFor="district" className="label text-lg font-semibold">
                   District <span className="text-red-500">*</span>
                 </label>
                 <select
+                  id="district"
                   value={search.district}
                   onChange={handleDistrictChange}
                   className="select select-bordered w-full text-lg rounded-xl"
@@ -152,13 +168,16 @@ const SearchDonors = () => {
                   ))}
                 </select>
               </div>
+
+              {/* Upazila Select */}
               <div>
-                <label className="label text-lg font-semibold">
+                <label htmlFor="upazila" className="label text-lg font-semibold">
                   Upazila <span className="text-red-500">*</span>
                 </label>
                 <select
+                  id="upazila"
                   value={search.upazila}
-                  onChange={(e) => setSearch({ ...search, upazila: e.target.value })}
+                  onChange={(e) => setSearch((prev) => ({ ...prev, upazila: e.target.value }))}
                   className="select select-bordered w-full text-lg rounded-xl"
                   disabled={filteredUpazilas.length === 0}
                   required
@@ -174,7 +193,7 @@ const SearchDonors = () => {
                 </select>
               </div>
 
-             
+              {/* Buttons */}
               <div className="flex flex-col justify-end gap-4">
                 <button
                   type="submit"
@@ -192,20 +211,22 @@ const SearchDonors = () => {
                 </button>
               </div>
             </form>
-          </div>
+          </section>
+
+          {/* Results Section */}
           {loading ? (
             <div className="flex justify-center py-20">
               <span className="loading loading-spinner loading-lg text-red-600"></span>
             </div>
           ) : donors.length === 0 ? (
-            <div className="text-center py-20 bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl">
+            <section className="text-center py-20 bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl">
               <p className="text-2xl sm:text-3xl text-gray-600 dark:text-gray-400 mb-8">
                 No donors found matching your search criteria.
               </p>
               <p className="text-lg text-gray-500 dark:text-gray-400">
                 Try adjusting the filters or check back later.
               </p>
-            </div>
+            </section>
           ) : (
             <>
               <div className="text-center mb-10">
@@ -214,9 +235,9 @@ const SearchDonors = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {donors.map((donor) => (
-                  <div
+                  <article
                     key={donor._id}
                     className="card bg-base-100 dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 rounded-3xl"
                   >
@@ -225,13 +246,15 @@ const SearchDonors = () => {
                         <div className="w-32 rounded-full ring ring-red-500 ring-offset-base-100 ring-offset-4 shadow-2xl">
                           <img
                             src={donor.photoURL || "https://via.placeholder.com/128"}
-                            alt={donor.name}
+                            alt={donor.name || "Anonymous Donor"}
                             className="object-cover"
                           />
                         </div>
                       </div>
 
-                      <h2 className="card-title text-2xl font-bold">{donor.name || "Anonymous Donor"}</h2>
+                      <h2 className="card-title text-2xl font-bold">
+                        {donor.name || "Anonymous Donor"}
+                      </h2>
 
                       <div className="my-4">
                         <span className="badge badge-error badge-lg text-white font-bold text-xl px-6 py-4">
@@ -252,14 +275,15 @@ const SearchDonors = () => {
                         <a
                           href={`mailto:${donor.email}`}
                           className="btn btn-error btn-wide text-lg font-bold shadow-lg hover:shadow-xl transition"
+                          aria-label={`Contact donor ${donor.name || "Anonymous"}`}
                         >
                           Contact Donor
                         </a>
                       </div>
                     </div>
-                  </div>
+                  </article>
                 ))}
-              </div>
+              </section>
             </>
           )}
         </div>

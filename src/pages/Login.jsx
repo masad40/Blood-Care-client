@@ -12,34 +12,61 @@ const Login = () => {
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const from = location.state?.from?.pathname || "/";
 
-  const handleLogin = (e) => {
+  // ===== Normal Login =====
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     const email = e.target.email.value.trim();
     const password = e.target.password.value;
 
-    signInUser(email, password)
-      .then(() => {
-        navigate(from, { replace: true })
-        toast.success("Login Successful")
-      })
-      .catch(() => setError("Invalid email or password. Please try again."));
+    try {
+      await signInUser(email, password);
+      toast.success("Login successful!");
+      navigate(from, { replace: true });
+    } catch {
+      setError("Invalid email or password. Please try again.");
+      toast.error("Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===== Demo Login =====
+  const handleDemoLogin = async (email, password, role) => {
+    setError("");
+    setLoading(true);
+    try {
+      await signInUser(email, password);
+      toast.success(`${role} login successful`);
+      navigate(from, { replace: true });
+    } catch {
+      toast.error("Demo login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <Helmet>
         <title>BloodCare | Login</title>
-        <meta name="description" content="Log in to your BloodCare account to manage donation requests, search donors, and help save lives." />
+        <meta
+          name="description"
+          content="Log in to your BloodCare account to manage donation requests, search donors, and help save lives."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center px-4 py-12 transition-colors duration-500">
-        <div className="card w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden">
+        <div className="card w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl rounded-3xl">
           <div className="card-body p-8 lg:p-12">
+
+            {/* Header */}
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
                 Welcome Back
@@ -49,68 +76,111 @@ const Login = () => {
               </p>
             </div>
 
+            {/* Demo Login Buttons */}
+            <div className="space-y-3 mb-6">
+              <button
+                disabled={loading}
+                onClick={() =>
+                  handleDemoLogin(
+                    "tasnifmasad40@gmail.com",
+                    "Admin9427",
+                    "Admin"
+                  )
+                }
+                className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl"
+              >
+                Demo Admin Login
+              </button>
+
+              <button
+                disabled={loading}
+                onClick={() =>
+                  handleDemoLogin(
+                    "tx10pro20@gmail.com",
+                    "Volunteer9427",
+                    "Volunteer"
+                  )
+                }
+                className="btn w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl"
+              >
+                Demo Volunteer Login
+              </button>
+
+              <button
+                disabled={loading}
+                onClick={() =>
+                  handleDemoLogin(
+                    "habibdp06@gmail.com",
+                    "Mj9427",
+                    "User"
+                  )
+                }
+                className="btn w-full bg-red-600 hover:bg-red-700 text-white rounded-xl"
+              >
+                Demo User Login
+              </button>
+            </div>
+
+            <div className="divider">OR</div>
+
+            {/* Login Form */}
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
-                <label className="label text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Email Address
-                </label>
+                <label className="label font-semibold">Email Address</label>
                 <input
                   name="email"
                   type="email"
                   placeholder="you@example.com"
-                  className="input input-bordered w-full text-lg px-5 py-4 rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-red-500 focus:ring-4 focus:ring-red-500/20 transition"
+                  className="input input-bordered w-full rounded-xl"
                   required
                 />
               </div>
 
               <div>
-                <label className="label text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Password
-                </label>
+                <label className="label font-semibold">Password</label>
                 <div className="relative">
                   <input
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="input input-bordered w-full text-lg px-5 py-4 pr-14 rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-red-500 focus:ring-4 focus:ring-red-500/20 transition"
+                    className="input input-bordered w-full pr-14 rounded-xl"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-4 top-1/2 -translate-y-1/2"
                   >
-                    {showPassword ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
               </div>
 
               {error && (
-                <div className="alert alert-error shadow-lg rounded-xl">
-                  <span className="text-white font-medium">{error}</span>
+                <div className="alert alert-error rounded-xl">
+                  <span>{error}</span>
                 </div>
               )}
 
               <button
                 type="submit"
-                className="btn btn-error w-full text-xl font-bold py-4 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                disabled={loading}
+                className="btn btn-error w-full rounded-xl"
               >
-                Log In
+                {loading ? "Logging in..." : "Log In"}
               </button>
             </form>
 
-            <div className="mt-8 text-center">
-              <p className="text-gray-600 dark:text-gray-300 text-lg">
-                Don't have an account?{" "}
-                <Link
-                  to="/register"
-                  className="font-bold text-red-600 dark:text-red-500 hover:underline transition"
-                >
+            {/* Footer */}
+            <div className="mt-6 text-center">
+              <p className="text-gray-600 dark:text-gray-300">
+                Don’t have an account?{" "}
+                <Link to="/register" className="text-red-600 font-bold">
                   Register here
                 </Link>
               </p>
             </div>
+
           </div>
         </div>
       </div>
