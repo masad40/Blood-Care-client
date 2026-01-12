@@ -137,14 +137,12 @@ const AllUsers = () => {
               </div>
             ) : (
               <>
-                {/* Desktop Table */}
                 <div className="hidden lg:block overflow-x-auto">
                   <table className="table table-zebra w-full">
                     <thead>
                       <tr className="bg-red-50 dark:bg-red-900/30 text-lg">
                         <th>Avatar</th>
                         <th>Name</th>
-                        {/* <th>Email</th> */}
                         <th>Blood Group</th>
                         <th>District</th>
                         <th>Role</th>
@@ -162,8 +160,6 @@ const AllUsers = () => {
                               </div>
                             </div>
                           </td>
-
-                          {/* Name + optional Shield icon if admin */}
                           <td className="font-bold text-lg flex items-center gap-2 whitespace-nowrap">
                             {u.name}
                             {u.role === "admin" && (
@@ -171,13 +167,11 @@ const AllUsers = () => {
                             )}
                           </td>
 
-                          {/* Email + Mail icon */}
                           <td className="text-sm flex items-center gap-2 whitespace-nowrap">
                             <Mail size={16} />
                             {u.email}
                           </td>
 
-                          {/* Blood Group + Droplet icon */}
                           <td>
                             <span className="badge badge-error badge-lg text-white font-bold flex items-center gap-1">
                               <Droplet size={14} />
@@ -185,20 +179,17 @@ const AllUsers = () => {
                             </span>
                           </td>
 
-                          {/* District + MapPin icon */}
                           <td className="flex items-center gap-2 whitespace-nowrap">
                             <MapPin size={14} />
                             {u.district || "-"}
                           </td>
 
-                          {/* Role badge */}
                           <td>
                             <span className="badge badge-primary capitalize font-medium">
                               {u.role}
                             </span>
                           </td>
 
-                          {/* Status + icon */}
                           <td>
                             <span
                               className={`badge capitalize font-medium flex items-center gap-1 whitespace-nowrap ${
@@ -214,7 +205,6 @@ const AllUsers = () => {
                             </span>
                           </td>
 
-                          {/* Actions dropdown */}
                           <td>
                             <div className="dropdown dropdown-end">
                               <label tabIndex={0} className="btn btn-ghost btn-sm flex items-center gap-1">
@@ -269,7 +259,6 @@ const AllUsers = () => {
                   </table>
                 </div>
 
-                {/* Mobile cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
                   {users.map((u) => (
                     <div
@@ -384,7 +373,6 @@ const AllUsers = () => {
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {pagination.totalPages > 1 && (
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12">
                     <button

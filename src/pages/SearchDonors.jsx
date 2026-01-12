@@ -135,7 +135,7 @@ const SearchDonors = () => {
               onSubmit={handleSearch}
               className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
-              {/* Blood Group Select */}
+            
               <div>
                 <label
                   htmlFor="bloodGroup"
@@ -162,7 +162,6 @@ const SearchDonors = () => {
                 </select>
               </div>
 
-              {/* District Select */}
               <div>
                 <label
                   htmlFor="district"
@@ -187,7 +186,6 @@ const SearchDonors = () => {
                 </select>
               </div>
 
-              {/* Upazila Select */}
               <div>
                 <label
                   htmlFor="upazila"
@@ -219,7 +217,6 @@ const SearchDonors = () => {
                 </select>
               </div>
 
-              {/* Buttons */}
               <div className="flex flex-col justify-end gap-4">
                 <motion.button
                   type="submit"
@@ -245,7 +242,6 @@ const SearchDonors = () => {
             </form>
           </motion.section>
 
-          {/* Results Section */}
           {loading ? (
             <div className="flex justify-center py-20">
               <span className="loading loading-spinner loading-lg text-red-600"></span>

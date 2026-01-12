@@ -2,7 +2,6 @@ import React from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { motion } from "framer-motion";
 
-/* ================= ANIMATION VARIANTS ================= */
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: {
@@ -40,7 +39,6 @@ const stagger = {
 const Contact = () => {
   return (
     <div className="min-h-screen bg-base-200 dark:bg-gray-900 overflow-hidden">
-      {/* ================= HERO ================= */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -63,10 +61,8 @@ const Contact = () => {
         </motion.div>
       </motion.div>
 
-      {/* ================= MAIN CONTENT ================= */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-          {/* ================= CONTACT INFO ================= */}
           <motion.div
             variants={fadeLeft}
             initial="hidden"
@@ -91,7 +87,6 @@ const Contact = () => {
               viewport={{ once: true }}
               className="space-y-6"
             >
-              {/* Phone */}
               <motion.div
                 variants={fadeUp}
                 whileHover={{ x: 6 }}
@@ -109,7 +104,6 @@ const Contact = () => {
                 </div>
               </motion.div>
 
-              {/* Email */}
               <motion.div
                 variants={fadeUp}
                 whileHover={{ x: 6 }}
@@ -132,7 +126,6 @@ const Contact = () => {
                 </div>
               </motion.div>
 
-              {/* Location */}
               <motion.div
                 variants={fadeUp}
                 whileHover={{ x: 6 }}
@@ -153,7 +146,6 @@ const Contact = () => {
             </motion.div>
           </motion.div>
 
-          {/* ================= CONTACT FORM ================= */}
           <motion.div
             variants={fadeRight}
             initial="hidden"
@@ -237,7 +229,6 @@ const Contact = () => {
           </motion.div>
         </div>
 
-        {/* ================= FOOTER ================= */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

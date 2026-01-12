@@ -23,7 +23,7 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 
 export const router = createBrowserRouter([
-  // ==================== Public Routes ====================
+  
   {
     path: "/",
     element: <MainLayout />,

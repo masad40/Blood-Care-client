@@ -59,7 +59,6 @@ const Profile = () => {
       >
         <div className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
 
-          {/* HEADER */}
           <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center">
             <div className="flex justify-center mb-4">
               <div className="p-3 bg-white/20 rounded-full">
@@ -76,10 +75,8 @@ const Profile = () => {
             </p>
           </div>
 
-          {/* BODY */}
           <div className="p-8 lg:p-12 -mt-10 text-center">
 
-            {/* AVATAR */}
             <div className="flex justify-center mb-6 relative">
               <div
                 className="w-32 rounded-full ring-4 ring-red-500 ring-offset-4 ring-offset-base-100 shadow-2xl overflow-hidden cursor-pointer transform transition-transform duration-300 hover:scale-110 group"
@@ -97,7 +94,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* NAME & EMAIL */}
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-3 mb-2">
               <User className="h-7 w-7 text-red-600 dark:text-red-500" />
               {profileData.name}
@@ -107,7 +103,6 @@ const Profile = () => {
               {profileData.email}
             </p>
 
-            {/* BADGES */}
             <div className="flex flex-wrap justify-center gap-4 mt-8">
               <span
                 className={`badge bg-red-500 ${
@@ -142,8 +137,6 @@ const Profile = () => {
                 Verified
               </span>
             </div>
-
-            {/* ACTION */}
             <button
               onClick={() => navigate("/dashboard/updateProfile")}
               className="mt-12 btn btn-error btn-lg w-full text-xl font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group"
@@ -155,7 +148,6 @@ const Profile = () => {
               </svg>
             </button>
 
-            {/* ADDITIONAL INFO */}
             <div className="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700">
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center p-4 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-2xl">

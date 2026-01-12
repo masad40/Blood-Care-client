@@ -136,7 +136,6 @@ const RequestDetails = () => {
         />
       </Helmet>
 
-      {/* Page Container with fade-in animation */}
       <motion.main
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -145,7 +144,7 @@ const RequestDetails = () => {
       >
         <div className="max-w-5xl mx-auto">
           <section className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-            {/* HEADER */}
+      
             <header className="bg-gradient-to-r from-red-600 to-red-800 px-8 py-16 text-center text-white">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
                 Blood Donation Request
@@ -161,12 +160,11 @@ const RequestDetails = () => {
               </div>
             </header>
 
-            {/* DETAILS */}
             <div className="p-8 lg:p-16 space-y-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                {/* LEFT */}
+     
                 <div className="space-y-6">
-                  {/* Recipient */}
+              
                   <section>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                       Recipient Details
@@ -176,7 +174,6 @@ const RequestDetails = () => {
                     </p>
                   </section>
 
-                  {/* Location & Hospital */}
                   <section>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                       Location & Hospital
@@ -197,7 +194,6 @@ const RequestDetails = () => {
                     </div>
                   </section>
 
-                  {/* Donation Schedule */}
                   <section>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                       Donation Schedule
@@ -216,9 +212,8 @@ const RequestDetails = () => {
                   </section>
                 </div>
 
-                {/* RIGHT */}
                 <div className="space-y-6">
-                  {/* Requester Info */}
+         
                   <section>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                       Requester Information
@@ -233,7 +228,6 @@ const RequestDetails = () => {
                     </div>
                   </section>
 
-                  {/* Current Donor Info */}
                   {request.status === "inprogress" && request.donorName && (
                     <section className="bg-blue-100 dark:bg-blue-900/30 p-8 rounded-2xl">
                       <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-300 mb-4">
@@ -250,7 +244,6 @@ const RequestDetails = () => {
                     </section>
                   )}
 
-                  {/* Request Message */}
                   <section>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                       Why Blood is Needed
@@ -262,9 +255,8 @@ const RequestDetails = () => {
                 </div>
               </div>
 
-              {/* ACTIONS */}
               <nav className="flex flex-wrap justify-center gap-6 pt-10 border-t border-gray-300 dark:border-gray-700">
-                {/* Donate Button */}
+            
                 {request.status === "pending" && (
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -278,7 +270,6 @@ const RequestDetails = () => {
                   </motion.button>
                 )}
 
-                {/* Edit/Delete Buttons */}
                 {canEditDelete &&
                   !["done", "canceled"].includes(request.status) && (
                     <>
@@ -312,7 +303,6 @@ const RequestDetails = () => {
                     </>
                   )}
 
-                {/* Back to All Requests */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     to="/donation-requests"
@@ -337,7 +327,6 @@ const RequestDetails = () => {
         </div>
       </motion.main>
 
-      {/* DONATE CONFIRM MODAL */}
       {showDonateModal && (
         <dialog open className="modal modal-open">
           <motion.form

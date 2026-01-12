@@ -207,7 +207,7 @@ const AllBloodDonationRequest = () => {
 
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-8">
-          {/* Header */}
+        
           <div className="mb-8 sm:mb-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -221,7 +221,7 @@ const AllBloodDonationRequest = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                {/* View Toggle */}
+               
                 <div className="hidden sm:flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
                   <button
                     onClick={() => setCurrentView("table")}
@@ -243,7 +243,6 @@ const AllBloodDonationRequest = () => {
                   </button>
                 </div>
 
-                {/* Mobile Filter Toggle */}
                 <button
                   onClick={() => setShowMobileFilters(!showMobileFilters)}
                   className="sm:hidden btn btn-outline btn-sm flex items-center gap-2"
@@ -255,7 +254,6 @@ const AllBloodDonationRequest = () => {
             </div>
           </div>
 
-          {/* Search Bar */}
           <div className="mb-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -277,7 +275,6 @@ const AllBloodDonationRequest = () => {
             </div>
           </div>
 
-          {/* Desktop Filters */}
           <div className="hidden sm:grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
               <select
@@ -335,7 +332,6 @@ const AllBloodDonationRequest = () => {
             </button>
           </div>
 
-          {/* Mobile Filters Overlay */}
           {showMobileFilters && (
             <div className="sm:hidden fixed inset-0 z-50">
               <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilters(false)} />
@@ -421,7 +417,6 @@ const AllBloodDonationRequest = () => {
             </div>
           )}
 
-          {/* Active Filters */}
           {(filters.status || filters.bloodGroup || filters.district || searchQuery) && (
             <div className="mb-6 flex flex-wrap gap-2">
               {filters.status && (
@@ -459,7 +454,6 @@ const AllBloodDonationRequest = () => {
             </div>
           )}
 
-          {/* Content */}
           {requests.length === 0 ? (
             <div className="text-center py-16 sm:py-20 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
               <Droplet className="h-16 w-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
@@ -480,7 +474,6 @@ const AllBloodDonationRequest = () => {
             </div>
           ) : (
             <>
-              {/* Desktop Table View */}
               {currentView === "table" ? (
                 <div className="hidden sm:block overflow-hidden rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800">
                   <div className="overflow-x-auto">
@@ -563,14 +556,12 @@ const AllBloodDonationRequest = () => {
                   </div>
                 </div>
               ) : (
-                /* Card View */
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {requests.map((req) => (
                     <div
                       key={req._id}
                       className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                     >
-                      {/* Card Header */}
                       <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
                         <div className="flex justify-between items-start">
                           <div>
@@ -588,7 +579,6 @@ const AllBloodDonationRequest = () => {
                         </div>
                       </div>
 
-                      {/* Card Body */}
                       <div className="p-4 sm:p-6 space-y-4">
                         <div className="flex items-center gap-3">
                           <div className="flex-shrink-0">
@@ -668,7 +658,6 @@ const AllBloodDonationRequest = () => {
                 </div>
               )}
 
-              {/* Mobile Card View (Always cards on mobile) */}
               <div className="sm:hidden space-y-4">
                 {requests.map((req) => (
                   <div
@@ -749,7 +738,6 @@ const AllBloodDonationRequest = () => {
                 ))}
               </div>
 
-              {/* Pagination */}
               {pagination.totalPages > 1 && (
                 <div className="mt-8 sm:mt-12">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4">

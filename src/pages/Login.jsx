@@ -17,7 +17,6 @@ const Login = () => {
 
   const from = location.state?.from?.pathname || "/";
 
-  // ===== Normal Login =====
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -38,7 +37,6 @@ const Login = () => {
     }
   };
 
-  // ===== Demo Login =====
   const handleDemoLogin = async (email, password, role) => {
     setError("");
     setLoading(true);
@@ -70,7 +68,7 @@ const Login = () => {
           transition={{ duration: 0.6 }}
           className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12"
         >
-          {/* Login Card */}
+         
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -78,7 +76,7 @@ const Login = () => {
             className="card bg-white dark:bg-gray-800 shadow-2xl rounded-3xl max-w-md mx-auto"
           >
             <div className="card-body p-8 lg:p-12">
-              {/* Header */}
+            
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
                   Welcome Back
@@ -88,7 +86,6 @@ const Login = () => {
                 </p>
               </div>
 
-              {/* Demo Login Buttons */}
               <div className="space-y-3 mb-6">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -137,7 +134,6 @@ const Login = () => {
 
               <div className="divider">OR</div>
 
-              {/* Login Form */}
               <form onSubmit={handleLogin} className="space-y-6">
                 <div>
                   <label className="label font-semibold">Email Address</label>
@@ -193,8 +189,6 @@ const Login = () => {
                   {loading ? "Logging in..." : "Log In"}
                 </motion.button>
               </form>
-
-              {/* Footer */}
               <div className="mt-6 text-center">
                 <p className="text-gray-600 dark:text-gray-300">
                   Don’t have an account?{" "}
@@ -206,7 +200,6 @@ const Login = () => {
             </div>
           </motion.div>
 
-          {/* Info Panel */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}

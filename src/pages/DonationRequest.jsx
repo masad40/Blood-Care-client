@@ -6,7 +6,6 @@ import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-/* ================= ANIMATION VARIANTS ================= */
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: {
@@ -81,7 +80,6 @@ const DonationRequest = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /* ================= SKELETON CARD ================= */
   const SkeletonCard = () => (
     <div className="card bg-base-100 dark:bg-gray-800 shadow-xl animate-pulse">
       <div className="card-body">
@@ -109,7 +107,6 @@ const DonationRequest = () => {
         />
       </Helmet>
 
-      {/* ================= PAGE WRAPPER ================= */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -117,7 +114,7 @@ const DonationRequest = () => {
         className="min-h-screen bg-base-200 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto">
-          {/* ================= HEADER ================= */}
+       
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -132,7 +129,6 @@ const DonationRequest = () => {
             </p>
           </motion.div>
 
-          {/* ================= LOADING ================= */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(9)].map((_, i) => (
@@ -140,7 +136,7 @@ const DonationRequest = () => {
               ))}
             </div>
           ) : requests.length === 0 ? (
-            /* ================= EMPTY STATE ================= */
+          
             <motion.div
               variants={zoomIn}
               initial="hidden"
@@ -172,7 +168,7 @@ const DonationRequest = () => {
             </motion.div>
           ) : (
             <>
-              {/* ================= REQUEST CARDS ================= */}
+           
               <motion.div
                 variants={stagger}
                 initial="hidden"
@@ -230,7 +226,6 @@ const DonationRequest = () => {
                 ))}
               </motion.div>
 
-              {/* ================= PAGINATION ================= */}
               {pagination.totalPages > 1 && (
                 <motion.div
                   variants={fadeUp}

@@ -18,7 +18,6 @@ const MyDonationRequest = () => {
     totalRequests: 0,
   });
 
-  // ================= FETCH DATA =================
   const fetchMyRequests = async (page = 1) => {
     if (!user?.email) return;
 
@@ -53,7 +52,6 @@ const MyDonationRequest = () => {
     }
   }, [user, authLoading]);
 
-  // ================= DELETE =================
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this request?")) return;
 
@@ -68,7 +66,7 @@ const MyDonationRequest = () => {
     }
   };
 
-  // ================= STATUS BADGE =================
+
   const getStatusBadge = (status) => {
     const styles = {
       pending: "badge-warning",
@@ -85,13 +83,11 @@ const MyDonationRequest = () => {
     );
   };
 
-  // ================= PAGINATION =================
   const handlePageChange = (page) => {
     fetchMyRequests(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ================= LOADING =================
   if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -110,7 +106,7 @@ const MyDonationRequest = () => {
         />
       </Helmet>
 
-      {/* Page Container with fade-in animation */}
+  
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -132,7 +128,7 @@ const MyDonationRequest = () => {
             </div>
 
             <div className="p-8 lg:p-12">
-              {/* CREATE BUTTON */}
+  
               <div className="flex justify-end mb-8">
                 <Link
                   to="/dashboard/createRequest"
@@ -143,7 +139,7 @@ const MyDonationRequest = () => {
                 </Link>
               </div>
 
-              {/* EMPTY STATE */}
+    
               {requests.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -163,7 +159,7 @@ const MyDonationRequest = () => {
                 </motion.div>
               ) : (
                 <>
-                  {/* DESKTOP TABLE */}
+                
                   <div className="hidden lg:block overflow-x-auto mb-12">
                     <table className="table table-zebra w-full">
                       <thead>
@@ -238,7 +234,6 @@ const MyDonationRequest = () => {
                     </table>
                   </div>
 
-                  {/* MOBILE CARDS */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
                     {requests.map((req) => (
                       <motion.div
@@ -302,7 +297,6 @@ const MyDonationRequest = () => {
                     ))}
                   </div>
 
-                  {/* PAGINATION */}
                   {pagination.totalPages > 1 && (
                     <div className="flex justify-center gap-4 mt-10">
                       <button
@@ -316,7 +310,7 @@ const MyDonationRequest = () => {
                             : ""
                         }`}
                       >
-                        {/* Left arrow */}
+             
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"
@@ -350,7 +344,7 @@ const MyDonationRequest = () => {
                         }`}
                       >
                         Next
-                        {/* Right arrow */}
+                    
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"

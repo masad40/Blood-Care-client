@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Droplet, Heart, Users, Shield, Clock, Award } from "lucide-react";
 import { motion } from "framer-motion";
 
-/* ================= ANIMATION VARIANTS ================= */
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: {
@@ -41,7 +40,6 @@ const stagger = {
 const About = () => {
   return (
     <div className="min-h-screen bg-base-200 dark:bg-gray-900 overflow-hidden">
-      {/* ================= HERO SECTION ================= */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -77,7 +75,6 @@ const About = () => {
         </motion.div>
       </motion.div>
 
-      {/* ================= MISSION & VISION ================= */}
       <section className="py-16 md:py-24 bg-base-100 dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -103,7 +100,6 @@ const About = () => {
               </p>
             </motion.div>
 
-            {/* Image */}
             <motion.div
               variants={fadeRight}
               initial="hidden"
@@ -134,7 +130,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* ================= WHY CHOOSE ================= */}
       <section className="py-20 bg-red-50 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.h2
@@ -180,7 +175,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* ================= CTA ================= */}
       <motion.section
         variants={fadeUp}
         initial="hidden"
@@ -213,7 +207,6 @@ const About = () => {
         </div>
       </motion.section>
 
-      {/* ================= FOOTER ================= */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

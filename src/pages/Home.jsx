@@ -14,7 +14,6 @@ import {
 } from "react-icons/fa";
 import CountUp from "react-countup";
 
-/* ================= ANIMATION VARIANTS ================= */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -41,7 +40,7 @@ const zoomIn = {
   },
 };
 
-/* ================= COMPONENT ================= */
+
 
 const Home = () => {
   const stats = [
@@ -94,8 +93,6 @@ const Home = () => {
         transition={{ duration: 0.6 }}
         className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
       >
-
-        {/* HERO */}
         <section className="relative h-[70vh] flex flex-col items-center justify-center bg-gradient-to-r from-red-700 to-red-900 text-white overflow-hidden px-6">
           <div className="max-w-4xl text-center space-y-6 z-10">
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
@@ -154,8 +151,6 @@ const Home = () => {
           </motion.div>
         </section>
 
-
-        {/* FEATURES */}
         <section className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Why Choose BloodCare</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -175,7 +170,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* HOW IT WORKS */}
         <section className="bg-gray-100 dark:bg-gray-800 py-20">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">How BloodCare Works</h2>
@@ -203,7 +197,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* STATS */}
         <section className="max-w-7xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             {stats.map((stat, i) => (
@@ -225,7 +218,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* CTA */}
         <section className="bg-red-600 text-white py-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Need Blood Urgently?</h2>
           <p className="mb-6">Post a blood request and reach donors instantly.</p>
@@ -234,7 +226,6 @@ const Home = () => {
           </Link>
         </section>
 
-        {/* CATEGORIES */}
         <section className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Categories</h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -250,7 +241,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* LATEST NEWS */}
         <section className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Latest News</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -267,7 +257,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* FAQ */}
         <section className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
           <div className="max-w-3xl mx-auto space-y-6">
@@ -283,7 +272,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* TESTIMONIAL */}
         <section className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Success Stories</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -299,7 +287,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* NEWSLETTER SUBSCRIBE */}
         <section className="bg-gray-100 dark:bg-gray-800 py-16 px-6 text-center rounded-2xl max-w-4xl mx-auto my-20">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Subscribe to Our Newsletter</h2>
           <p className="mb-6 text-gray-700 dark:text-gray-300">Get the latest news and updates about BloodCare</p>
@@ -316,7 +303,6 @@ const Home = () => {
           </form>
         </section>
 
-        {/* FINAL CTA */}
         <section className="py-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Become a Lifesaver Today</h2>
           <p className="mb-6 text-gray-600 dark:text-gray-400">Join thousands of donors helping save lives across Bangladesh.</p>

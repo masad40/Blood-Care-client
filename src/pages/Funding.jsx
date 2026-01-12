@@ -124,7 +124,7 @@ const Funding = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
         <div className="max-w-6xl mx-auto bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-          {/* Hero */}
+        
           <div className="bg-gradient-to-r from-red-600 to-pink-600 py-16 text-center text-white">
             <h1 className="text-5xl font-black flex justify-center items-center gap-3 mb-4">
               <HandHeart className="w-12 h-12 animate-pulse" />
@@ -142,7 +142,6 @@ const Funding = () => {
             </div>
           </div>
 
-          {/* Donate Button */}
           <div className="text-center py-12 bg-gray-100 dark:bg-gray-700">
             <button
               onClick={() => setShowModal(true)}
@@ -152,7 +151,6 @@ const Funding = () => {
             </button>
           </div>
 
-          {/* Table */}
           <div className="p-8">
             <h2 className="text-4xl font-bold text-center mb-10">
               Recent Donations
@@ -208,7 +206,6 @@ const Funding = () => {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="modal modal-open">
           <div className="modal-box">

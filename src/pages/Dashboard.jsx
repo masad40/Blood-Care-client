@@ -65,9 +65,8 @@ const Dashboard = () => {
     pendingRequests: 0
   });
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState("month"); // "week", "month", "year"
+  const [timeRange, setTimeRange] = useState("month"); 
 
-  /* ---------------- Fetch Data ---------------- */
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -85,7 +84,6 @@ const Dashboard = () => {
           axios.get("https://blood-donation-server-tan.vercel.app/fundings"),
         ]);
 
-        // Mock additional stats for demo
         setStats({
           totalUsers: users.data.totalUsers || 12500,
           totalRequests: requests.data.totalRequests || 9200,
@@ -108,7 +106,6 @@ const Dashboard = () => {
     }
   }, [authLoading, user, role]);
 
-  /* ---------------- Helpers ---------------- */
   const getStatusBadge = (status) => {
     const statusConfig = {
       pending: {
@@ -139,7 +136,6 @@ const Dashboard = () => {
     );
   };
 
-  /* ---------------- Chart Data ---------------- */
   const weeklyData = [
     { day: "Mon", requests: 42, donations: 38 },
     { day: "Tue", requests: 48, donations: 42 },
@@ -200,7 +196,7 @@ const Dashboard = () => {
 
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6">
-          {/* ---------------- Header ---------------- */}
+         
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
@@ -236,7 +232,6 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Welcome Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -274,10 +269,9 @@ const Dashboard = () => {
             </motion.div>
           </div>
 
-          {/* ---------------- DONOR DASHBOARD ---------------- */}
           {role === "donor" && (
             <div className="space-y-8">
-              {/* Quick Stats */}
+            
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {[
                   { label: "My Requests", value: myRequests.length, icon: ListChecks, color: "bg-blue-500" },
@@ -308,15 +302,14 @@ const Dashboard = () => {
                 ))}
               </div>
 
-              {/* Recent Requests & Quick Actions */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Recent Requests */}
+           
                 <div className="lg:col-span-2">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                       Recent Donation Requests
                     </h2>
-                    <Link to="/dashboard/my-requests" className="text-sm text-red-600 dark:text-red-500 font-medium flex items-center gap-1">
+                    <Link to="/dashboard/my-donation-requests" className="text-sm text-red-600 dark:text-red-500 font-medium flex items-center gap-1">
                       View All
                       <ChevronRight className="h-4 w-4" />
                     </Link>
@@ -396,9 +389,8 @@ const Dashboard = () => {
                   )}
                 </div>
 
-                {/* Quick Actions & Stats */}
                 <div className="space-y-6">
-                  {/* Quick Actions */}
+                
                   <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                       Quick Actions
@@ -445,7 +437,6 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  {/* Donation Stats */}
                   <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                       Your Impact
@@ -470,10 +461,9 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* ---------------- ADMIN / VOLUNTEER DASHBOARD ---------------- */}
           {(role === "admin" || role === "volunteer") && (
             <div className="space-y-8">
-              {/* Stats Overview */}
+           
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {[
                   { 
@@ -535,9 +525,8 @@ const Dashboard = () => {
                 ))}
               </div>
 
-              {/* Charts Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Activity Chart */}
+              
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
@@ -598,7 +587,6 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {/* Status Distribution */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
                     Request Status Distribution
@@ -633,9 +621,8 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Additional Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Blood Group Distribution */}
+         
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
                     Blood Group Distribution
@@ -668,8 +655,6 @@ const Dashboard = () => {
                     </ResponsiveContainer>
                   </div>
                 </div>
-
-                {/* Quick Stats */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
                     Quick Statistics
@@ -696,7 +681,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Recent Activity */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white">

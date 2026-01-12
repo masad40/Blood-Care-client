@@ -36,7 +36,6 @@ const EditRequest = () => {
 
   const selectedDistrict = watch("recipientDistrict");
 
-  // Load districts & upazilas
   useEffect(() => {
     fetch("/districts.json")
       .then((res) => res.json())
@@ -47,7 +46,6 @@ const EditRequest = () => {
       .then((data) => setAllUpazilas(data.upazilas || []));
   }, []);
 
-  // Fetch single request & populate form
   useEffect(() => {
     const fetchRequest = async () => {
       try {
@@ -64,7 +62,6 @@ const EditRequest = () => {
           return;
         }
 
-        // Populate form fields
         setValue("recipientName", req.recipientName || "");
         setValue("bloodGroup", req.bloodGroup || "");
         setValue("recipientDistrict", req.district || "");
@@ -75,7 +72,6 @@ const EditRequest = () => {
         setValue("donationTime", req.donationTime || "");
         setValue("requestMessage", req.requestMessage || "");
 
-        // Pre-filter upazilas based on saved district
         const districtObj = districts.find((d) => d.name === req.district);
         if (districtObj) {
           const filtered = allUpazilas.filter(
@@ -96,7 +92,7 @@ const EditRequest = () => {
     }
   }, [id, user, districts, allUpazilas, navigate, setValue]);
 
-  // Update upazila list when district changes
+
   useEffect(() => {
     if (selectedDistrict) {
       const district = districts.find((d) => d.name === selectedDistrict);
@@ -202,7 +198,7 @@ const EditRequest = () => {
             className="card-body p-6 lg:p-12"
           >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              {/* Requester Info - Readonly */}
+         
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-base-200 dark:bg-gray-700/50 p-6 rounded-2xl">
                 <div>
                   <label className="label font-semibold">Requester Name</label>
@@ -224,7 +220,6 @@ const EditRequest = () => {
                 </div>
               </div>
 
-              {/* Recipient & Blood Group */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="label font-semibold">
@@ -282,7 +277,6 @@ const EditRequest = () => {
                 </div>
               </div>
 
-              {/* Location */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="label font-semibold">
@@ -338,7 +332,6 @@ const EditRequest = () => {
                 </div>
               </div>
 
-              {/* Hospital & Address */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="label font-semibold">
@@ -377,7 +370,6 @@ const EditRequest = () => {
                 </div>
               </div>
 
-              {/* Date & Time */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="label font-semibold">
@@ -420,7 +412,6 @@ const EditRequest = () => {
                 </div>
               </div>
 
-              {/* Message */}
               <div>
                 <label className="label font-semibold">
                   Why Blood is Needed <span className="text-red-500">*</span>
@@ -443,8 +434,6 @@ const EditRequest = () => {
                   </p>
                 )}
               </div>
-
-              {/* Buttons */}
               <div className="flex flex-col sm:flex-row justify-center gap-6 pt-8">
                 <motion.button
                   type="submit"

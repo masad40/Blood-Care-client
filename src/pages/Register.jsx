@@ -140,14 +140,12 @@ const Register = () => {
           transition={{ duration: 0.6 }}
           className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12"
         >
-          {/* Register Form Card */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
             className="card bg-white dark:bg-gray-800 shadow-2xl rounded-3xl max-w-xl mx-auto"
           >
-            {/* HEADER */}
             <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center rounded-t-3xl">
               <h1 className="text-4xl font-bold text-white">Register as Donor</h1>
               <p className="mt-2 text-lg text-red-100">
@@ -155,10 +153,9 @@ const Register = () => {
               </p>
             </div>
 
-            {/* FORM */}
             <div className="p-8 lg:p-12 -mt-6">
               <form onSubmit={handleRegister} className="space-y-6">
-                {/* Name & Email */}
+             
                 <div className="grid md:grid-cols-2 gap-6">
                   <input
                     name="name"
@@ -177,7 +174,6 @@ const Register = () => {
                   />
                 </div>
 
-                {/* IMAGE UPLOAD - visible input like before */}
                 <input
                   type="file"
                   name="avatar"
@@ -186,7 +182,6 @@ const Register = () => {
                   required
                 />
 
-                {/* Blood Group, District & Upazila */}
                 <div className="grid md:grid-cols-3 gap-6">
                   <select
                     name="bloodGroup"
@@ -238,8 +233,6 @@ const Register = () => {
                     ))}
                   </select>
                 </div>
-
-                {/* Password & Confirm Password */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <input
                     name="password"
@@ -259,7 +252,6 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Submit Button */}
                 <motion.button
                   disabled={loading}
                   whileHover={{ scale: 1.05 }}
@@ -270,7 +262,6 @@ const Register = () => {
                 </motion.button>
               </form>
 
-              {/* Login Link */}
               <p className="mt-8 text-center text-gray-600 dark:text-gray-300">
                 Already have an account?{" "}
                 <Link to="/login" className="font-bold text-red-600 hover:underline">
@@ -280,7 +271,6 @@ const Register = () => {
             </div>
           </motion.div>
 
-          {/* Info Panel */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}

@@ -17,7 +17,8 @@ import {
   Heart,
   Edit3,
   CheckCircle,
-  Image
+  Image,
+  ChevronDown
 } from "lucide-react";
 
 const UpdateProfile = () => {
@@ -30,16 +31,20 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Fade-in animation state
   const [fadeIn, setFadeIn] = useState(false);
   useEffect(() => {
     setFadeIn(true);
   }, []);
 
-  // ImgBB API key
+
+  useEffect(() => {
+    if (user?.bloodGroup) {
+      setBloodGroup(user.bloodGroup);
+    }
+  }, [user]);
+
   const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_KEY || "your-imgbb-api-key";
 
-  // Image upload handler
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -125,7 +130,7 @@ const UpdateProfile = () => {
           </div>
 
           <div className="card-body p-6 sm:p-8 lg:p-16 -mt-6">
-            {/* Profile Image Preview with Camera Icon */}
+ 
             <div className="flex flex-col items-center mb-10">
               <div className="relative group mb-6">
                 <div className="w-28 sm:w-36 h-28 sm:h-36 rounded-full ring-4 ring-red-500 ring-offset-4 ring-offset-base-100 shadow-2xl overflow-hidden cursor-pointer transition-transform duration-300 group-hover:scale-110">
@@ -150,7 +155,7 @@ const UpdateProfile = () => {
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-6 sm:space-y-8">
-              {/* Full Name with User Icon */}
+          
               <div>
                 <label className="label text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-3">
                   <User className="h-6 w-6 text-red-600" /> Full Name <span className="text-red-500">*</span>
@@ -168,7 +173,6 @@ const UpdateProfile = () => {
                 </div>
               </div>
 
-              {/* Email Display with Mail Icon */}
               <div>
                 <label className="label text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-3">
                   <Mail className="h-6 w-6 text-red-600" /> Email Address
@@ -188,7 +192,6 @@ const UpdateProfile = () => {
                 <p className="text-sm text-gray-500 mt-2">Email cannot be changed</p>
               </div>
 
-              {/* Blood Group with Droplet Icon */}
               <div>
                 <label className="label text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-3">
                   <Droplet className="h-6 w-6 text-red-600" /> Blood Group <span className="text-red-500">*</span>
@@ -197,8 +200,11 @@ const UpdateProfile = () => {
                   <Droplet className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-6 w-6 z-10" />
                   <select
                     value={bloodGroup}
-                    onChange={(e) => setBloodGroup(e.target.value)}
-                    className="select select-bordered w-full text-lg sm:text-xl pl-12 pr-6 py-4 sm:py-5 rounded-2xl bg-gray-50 dark:bg-gray-700 focus:border-red-500 focus:ring-4 focus:ring-red-500/20 transition appearance-none"
+                    onChange={(e) => {
+                      console.log("Selected Blood Group:", e.target.value);
+                      setBloodGroup(e.target.value);
+                    }}
+                    className="select select-bordered w-full text-lg sm:text-xl pl-12 pr-12 py-4 sm:py-5 rounded-2xl bg-gray-50 dark:bg-gray-700 focus:border-red-500 focus:ring-4 focus:ring-red-500/20 transition"
                     required
                   >
                     <option value="">Select Blood Group</option>
@@ -208,10 +214,18 @@ const UpdateProfile = () => {
                       </option>
                     ))}
                   </select>
+                  {/* Custom dropdown arrow */}
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <ChevronDown className="h-5 w-5 text-gray-500" />
+                  </div>
+                </div>
+                <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-900 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Current selection: <span className="font-bold text-red-600">{bloodGroup || "Not selected"}</span>
+                  </p>
                 </div>
               </div>
 
-              {/* Image Upload with Upload Icon */}
               <div>
                 <label className="label text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-3">
                   <Upload className="h-6 w-6 text-red-600" /> Upload Profile Photo
@@ -234,7 +248,6 @@ const UpdateProfile = () => {
                 )}
               </div>
 
-              {/* Action Buttons with Icons */}
               <div className="flex flex-col sm:flex-row gap-6 pt-10">
                 <button
                   type="submit"
@@ -269,7 +282,6 @@ const UpdateProfile = () => {
               </div>
             </form>
 
-            {/* Current Info Summary */}
             <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
                 <Shield className="h-5 w-5 text-red-600" /> Current Information
