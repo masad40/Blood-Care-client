@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import { FaHeartbeat, FaMapMarkedAlt, FaTint } from "react-icons/fa";
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -16,7 +18,6 @@ const Register = () => {
   const [filteredUpazilas, setFilteredUpazilas] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /* ---------------- FETCH LOCATION DATA ---------------- */
   useEffect(() => {
     const loadLocations = async () => {
       try {
@@ -24,18 +25,15 @@ const Register = () => {
           fetch("/districts.json").then((res) => res.json()),
           fetch("/upazilas.json").then((res) => res.json()),
         ]);
-
         setDistricts(districtRes?.districts || []);
         setAllUpazilas(upazilaRes?.upazilas || []);
       } catch {
         toast.error("Failed to load location data");
       }
     };
-
     loadLocations();
   }, []);
 
-  /* ---------------- DISTRICT CHANGE ---------------- */
   const handleDistrictChange = useCallback(
     (e) => {
       const selectedName = e.target.value;
@@ -54,7 +52,6 @@ const Register = () => {
     [districts, allUpazilas]
   );
 
-  /* ---------------- REGISTER HANDLER ---------------- */
   const handleRegister = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -87,7 +84,6 @@ const Register = () => {
     try {
       setLoading(true);
 
-      /* -------- IMAGE UPLOAD -------- */
       const formData = new FormData();
       formData.append("image", image);
 
@@ -99,11 +95,9 @@ const Register = () => {
       const photoURL = imgRes?.data?.data?.display_url;
       if (!photoURL) throw new Error("Image upload failed");
 
-      /* -------- AUTH -------- */
       await createUser(email, password);
       await updateProfileInfo(name, photoURL);
 
-      /* -------- SAVE USER -------- */
       const userInfo = {
         name,
         email,
@@ -139,122 +133,192 @@ const Register = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950">
-        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center px-4 py-12 transition-colors duration-500">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12"
+        >
+          {/* Register Form Card */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="card bg-white dark:bg-gray-800 shadow-2xl rounded-3xl max-w-xl mx-auto"
+          >
+            {/* HEADER */}
+            <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center rounded-t-3xl">
+              <h1 className="text-4xl font-bold text-white">Register as Donor</h1>
+              <p className="mt-2 text-lg text-red-100">
+                Join our community and help save lives
+              </p>
+            </div>
 
-          {/* HEADER */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center">
-            <h1 className="text-4xl font-bold text-white">Register as Donor</h1>
-            <p className="mt-2 text-lg text-red-100">
-              Join our community and help save lives
-            </p>
-          </div>
+            {/* FORM */}
+            <div className="p-8 lg:p-12 -mt-6">
+              <form onSubmit={handleRegister} className="space-y-6">
+                {/* Name & Email */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <input
+                    name="name"
+                    placeholder="Full Name"
+                    className="input input-bordered rounded-xl"
+                    required
+                    autoComplete="name"
+                  />
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="Email Address"
+                    className="input input-bordered rounded-xl"
+                    required
+                    autoComplete="email"
+                  />
+                </div>
 
-          {/* FORM */}
-          <div className="p-8 lg:p-12 -mt-6">
-            <form onSubmit={handleRegister} className="space-y-6">
-
-              {/* BASIC INFO */}
-              <div className="grid md:grid-cols-2 gap-6">
+                {/* IMAGE UPLOAD - visible input like before */}
                 <input
-                  name="name"
-                  placeholder="Full Name"
-                  className="input input-bordered rounded-xl"
+                  type="file"
+                  name="avatar"
+                  accept="image/*"
+                  className="file-input file-input-bordered rounded-xl w-full"
                   required
                 />
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Email Address"
-                  className="input input-bordered rounded-xl"
-                  required
-                />
-              </div>
 
-              {/* IMAGE */}
-              <input
-                type="file"
-                name="avatar"
-                accept="image/*"
-                className="file-input file-input-bordered rounded-xl w-full"
-                required
-              />
+                {/* Blood Group, District & Upazila */}
+                <div className="grid md:grid-cols-3 gap-6">
+                  <select
+                    name="bloodGroup"
+                    required
+                    className="select select-bordered rounded-xl"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Blood Group
+                    </option>
+                    {BLOOD_GROUPS.map((bg) => (
+                      <option key={bg} value={bg}>
+                        {bg}
+                      </option>
+                    ))}
+                  </select>
 
-              {/* LOCATION & BLOOD */}
-              <div className="grid md:grid-cols-3 gap-6">
-                <select name="bloodGroup" required className="select select-bordered rounded-xl">
-                  <option value="" disabled selected>
-                    Blood Group
-                  </option>
-                  {BLOOD_GROUPS.map((bg) => (
-                    <option key={bg}>{bg}</option>
-                  ))}
-                </select>
+                  <select
+                    name="district"
+                    onChange={handleDistrictChange}
+                    required
+                    className="select select-bordered rounded-xl"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      District
+                    </option>
+                    {districts.map((d) => (
+                      <option key={d.id} value={d.name}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
 
-                <select
-                  name="district"
-                  onChange={handleDistrictChange}
-                  required
-                  className="select select-bordered rounded-xl"
+                  <select
+                    name="upazila"
+                    disabled={!filteredUpazilas.length}
+                    required
+                    className="select select-bordered rounded-xl"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      {filteredUpazilas.length ? "Upazila" : "Select district first"}
+                    </option>
+                    {filteredUpazilas.map((u) => (
+                      <option key={u.id} value={u.name}>
+                        {u.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Password & Confirm Password */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <input
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                    className="input input-bordered rounded-xl"
+                    required
+                    autoComplete="new-password"
+                  />
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="input input-bordered rounded-xl"
+                    required
+                    autoComplete="new-password"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <motion.button
+                  disabled={loading}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="btn btn-error btn-lg w-full rounded-2xl text-xl font-bold"
                 >
-                  <option value="" disabled selected>
-                    District
-                  </option>
-                  {districts.map((d) => (
-                    <option key={d.id}>{d.name}</option>
-                  ))}
-                </select>
+                  {loading ? "Creating Account..." : "Register as Donor"}
+                </motion.button>
+              </form>
 
-                <select
-                  name="upazila"
-                  disabled={!filteredUpazilas.length}
-                  required
-                  className="select select-bordered rounded-xl"
-                >
-                  <option value="" disabled selected>
-                    {filteredUpazilas.length ? "Upazila" : "Select district first"}
-                  </option>
-                  {filteredUpazilas.map((u) => (
-                    <option key={u.id}>{u.name}</option>
-                  ))}
-                </select>
+              {/* Login Link */}
+              <p className="mt-8 text-center text-gray-600 dark:text-gray-300">
+                Already have an account?{" "}
+                <Link to="/login" className="font-bold text-red-600 hover:underline">
+                  Login here
+                </Link>
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Info Panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.7 }}
+            className="hidden md:flex flex-col justify-center bg-red-600 dark:bg-red-800 rounded-3xl p-12 text-white shadow-2xl"
+          >
+            <h2 className="text-4xl font-extrabold mb-6 flex items-center gap-3">
+              <FaHeartbeat /> Why BloodCare?
+            </h2>
+
+            <div className="space-y-8 text-lg leading-relaxed">
+              <div className="flex items-center gap-4">
+                <FaTint className="text-5xl" />
+                <p>
+                  Connect with real donors quickly when time matters most.
+                </p>
               </div>
 
-              {/* PASSWORD */}
-              <div className="grid md:grid-cols-2 gap-6">
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  className="input input-bordered rounded-xl"
-                  required
-                />
-                <input
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="Confirm Password"
-                  className="input input-bordered rounded-xl"
-                  required
-                />
+              <div className="flex items-center gap-4">
+                <FaMapMarkedAlt className="text-5xl" />
+                <p>
+                  Easily find and donate blood in your district and community.
+                </p>
               </div>
 
-              {/* SUBMIT */}
-              <button
-                disabled={loading}
-                className="btn btn-error btn-lg w-full rounded-2xl text-xl font-bold"
-              >
-                {loading ? "Creating Account..." : "Register as Donor"}
-              </button>
-            </form>
+              <div className="flex items-center gap-4">
+                <FaHeartbeat className="text-5xl" />
+                <p>
+                  Trusted and secure platform dedicated to blood donation needs.
+                </p>
+              </div>
+            </div>
 
-            <p className="mt-8 text-center text-gray-600 dark:text-gray-300">
-              Already have an account?{" "}
-              <Link to="/login" className="font-bold text-red-600 hover:underline">
-                Login here
-              </Link>
+            <p className="mt-10 italic opacity-90 text-sm max-w-xs">
+              Join thousands of heroes making a difference every day with BloodCare.
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </>
   );

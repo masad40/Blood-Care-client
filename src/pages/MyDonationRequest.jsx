@@ -4,6 +4,8 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Loader2, Trash2, Edit2, Eye, Plus } from "lucide-react";
 
 const MyDonationRequest = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -75,7 +77,9 @@ const MyDonationRequest = () => {
       canceled: "badge-error",
     };
     return (
-      <span className={`badge ${styles[status] || "badge-ghost"} capitalize`}>
+      <span
+        className={`badge ${styles[status] || "badge-ghost"} uppercase px-4 py-2 font-semibold`}
+      >
         {status}
       </span>
     );
@@ -91,7 +95,7 @@ const MyDonationRequest = () => {
   if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <span className="loading loading-spinner loading-lg text-red-600"></span>
+        <Loader2 className="animate-spin text-red-600" size={48} />
       </div>
     );
   }
@@ -106,13 +110,19 @@ const MyDonationRequest = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4">
+      {/* Page Container with fade-in animation */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-            
             {/* HEADER */}
             <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center">
-              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">
+              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3 flex justify-center items-center gap-2">
+                <Plus size={36} />
                 🩸 My Donation Requests
               </h1>
               <p className="text-xl text-red-100">
@@ -122,20 +132,25 @@ const MyDonationRequest = () => {
             </div>
 
             <div className="p-8 lg:p-12">
-
               {/* CREATE BUTTON */}
               <div className="flex justify-end mb-8">
                 <Link
                   to="/dashboard/createRequest"
-                  className="btn btn-error btn-lg shadow-xl"
+                  className="btn btn-error btn-lg shadow-xl flex items-center gap-2"
                 >
-                  + Create New Request
+                  <Plus size={20} />
+                  Create New Request
                 </Link>
               </div>
 
               {/* EMPTY STATE */}
               {requests.length === 0 ? (
-                <div className="text-center py-20">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-center py-20"
+                >
                   <p className="text-2xl text-gray-600 dark:text-gray-400 mb-8">
                     You haven't created any donation requests yet.
                   </p>
@@ -145,7 +160,7 @@ const MyDonationRequest = () => {
                   >
                     Create Your First Request
                   </Link>
-                </div>
+                </motion.div>
               ) : (
                 <>
                   {/* DESKTOP TABLE */}
@@ -163,7 +178,12 @@ const MyDonationRequest = () => {
                       </thead>
                       <tbody>
                         {requests.map((req) => (
-                          <tr key={req._id}>
+                          <motion.tr
+                            key={req._id}
+                            whileHover={{ scale: 1.02 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                            className="cursor-pointer"
+                          >
                             <td className="font-bold">{req.recipientName}</td>
                             <td>
                               {req.upazila}, {req.district}
@@ -188,9 +208,9 @@ const MyDonationRequest = () => {
                             <td className="space-x-2">
                               <Link
                                 to={`/dashboard/request-details/${req._id}`}
-                                className="btn btn-sm btn-info"
+                                className="btn btn-sm btn-info flex items-center gap-1"
                               >
-                                View
+                                <Eye size={16} /> View
                               </Link>
 
                               {["pending", "inprogress"].includes(
@@ -199,20 +219,20 @@ const MyDonationRequest = () => {
                                 <>
                                   <Link
                                     to={`/dashboard/edit-request/${req._id}`}
-                                    className="btn btn-sm btn-warning"
+                                    className="btn btn-sm btn-warning flex items-center gap-1"
                                   >
-                                    Edit
+                                    <Edit2 size={16} /> Edit
                                   </Link>
                                   <button
                                     onClick={() => handleDelete(req._id)}
-                                    className="btn btn-sm btn-error"
+                                    className="btn btn-sm btn-error flex items-center gap-1"
                                   >
-                                    Delete
+                                    <Trash2 size={16} /> Delete
                                   </button>
                                 </>
                               )}
                             </td>
-                          </tr>
+                          </motion.tr>
                         ))}
                       </tbody>
                     </table>
@@ -221,8 +241,10 @@ const MyDonationRequest = () => {
                   {/* MOBILE CARDS */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
                     {requests.map((req) => (
-                      <div
+                      <motion.div
                         key={req._id}
+                        whileHover={{ scale: 1.03 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                         className="card bg-base-200 dark:bg-gray-700 shadow-xl"
                       >
                         <div className="card-body">
@@ -246,16 +268,15 @@ const MyDonationRequest = () => {
                             )}
                           </p>
                           <p>
-                            <strong>Status:</strong>{" "}
-                            {getStatusBadge(req.status)}
+                            <strong>Status:</strong> {getStatusBadge(req.status)}
                           </p>
 
-                          <div className="card-actions justify-end mt-4">
+                          <div className="card-actions justify-end mt-4 space-x-2">
                             <Link
                               to={`/dashboard/request-details/${req._id}`}
-                              className="btn btn-info btn-sm"
+                              className="btn btn-info btn-sm flex items-center gap-1"
                             >
-                              View
+                              <Eye size={14} /> View
                             </Link>
                             {["pending", "inprogress"].includes(
                               req.status
@@ -263,21 +284,21 @@ const MyDonationRequest = () => {
                               <>
                                 <Link
                                   to={`/dashboard/edit-request/${req._id}`}
-                                  className="btn btn-warning btn-sm"
+                                  className="btn btn-warning btn-sm flex items-center gap-1"
                                 >
-                                  Edit
+                                  <Edit2 size={14} /> Edit
                                 </Link>
                                 <button
                                   onClick={() => handleDelete(req._id)}
-                                  className="btn btn-error btn-sm"
+                                  className="btn btn-error btn-sm flex items-center gap-1"
                                 >
-                                  Delete
+                                  <Trash2 size={14} /> Delete
                                 </button>
                               </>
                             )}
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
 
@@ -289,26 +310,61 @@ const MyDonationRequest = () => {
                         onClick={() =>
                           handlePageChange(pagination.currentPage - 1)
                         }
-                        className="btn btn-outline btn-error"
+                        className={`btn btn-outline btn-error flex items-center gap-2 ${
+                          pagination.currentPage === 1
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
                       >
+                        {/* Left arrow */}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
                         Previous
                       </button>
 
-                      <span className="text-lg font-medium">
-                        Page {pagination.currentPage} of{" "}
-                        {pagination.totalPages}
+                      <span className="text-lg font-medium mt-2">
+                        Page {pagination.currentPage} of {pagination.totalPages}
                       </span>
 
                       <button
-                        disabled={
-                          pagination.currentPage === pagination.totalPages
-                        }
+                        disabled={pagination.currentPage === pagination.totalPages}
                         onClick={() =>
                           handlePageChange(pagination.currentPage + 1)
                         }
-                        className="btn btn-outline btn-error"
+                        className={`btn btn-outline btn-error flex items-center gap-2 ${
+                          pagination.currentPage === pagination.totalPages
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
                       >
                         Next
+                        {/* Right arrow */}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
                       </button>
                     </div>
                   )}
@@ -317,7 +373,7 @@ const MyDonationRequest = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };

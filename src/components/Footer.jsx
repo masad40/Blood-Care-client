@@ -31,19 +31,19 @@ const Footer = () => {
             
             {/* Social Links */}
             <div className="flex gap-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
+              <a href="https://www.facebook.com/tasnif.masad1" target="_blank" rel="noopener noreferrer" 
                  className="text-neutral-content/70 hover:text-red-500 transition-colors">
                 <Facebook size={24} />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+              <a href="https://x.com/tasnifmasad40" target="_blank" rel="noopener noreferrer"
                  className="text-neutral-content/70 hover:text-red-500 transition-colors">
                 <Twitter size={24} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+              <a href="https://www.instagram.com/tasnifmasad40/" target="_blank" rel="noopener noreferrer"
                  className="text-neutral-content/70 hover:text-red-500 transition-colors">
                 <Instagram size={24} />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+              <a href="https://www.linkedin.com/in/masad-webdev/" target="_blank" rel="noopener noreferrer"
                  className="text-neutral-content/70 hover:text-red-500 transition-colors">
                 <Linkedin size={24} />
               </a>
@@ -68,7 +68,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><Link to="/register" className="text-neutral-content/70 hover:text-red-500 transition-colors">Become a Donor</Link></li>
               <li><Link to="/dashboard" className="text-neutral-content/70 hover:text-red-500 transition-colors">Donor Dashboard</Link></li>
-              <li><Link to="/my-profile" className="text-neutral-content/70 hover:text-red-500 transition-colors">My Profile</Link></li>
+              <li><Link to="/dashboard/profile" className="text-neutral-content/70 hover:text-red-500 transition-colors">My Profile</Link></li>
               <li><a href="#" className="text-neutral-content/70 hover:text-red-500 transition-colors">Donation Guidelines</a></li>
             </ul>
           </div>
@@ -86,13 +86,13 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={20} className="text-red-500" />
-                <span className="text-neutral-content/80">+880 1711-XXXXXX</span>
+                <span className="text-neutral-content/80">+880 1616-259928</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={20} className="text-red-500" />
-                <a href="mailto:support@bloodcare-bd.org" 
+                <a href="mailto:tasnifmasad40@gmail.com" 
                    className="text-neutral-content/80 hover:text-red-500 transition-colors">
-                  support@bloodcare-bd.org
+                  tasnifmasad40@gmail.com
                 </a>
               </li>
             </ul>
@@ -103,9 +103,9 @@ const Footer = () => {
         <div className="border-t border-neutral-content/20 mt-12 pt-8 text-center text-sm text-neutral-content/60">
           <p>© {currentYear} BloodCare. All rights reserved.</p>
           <div className="mt-3 flex flex-wrap justify-center gap-6">
-            <Link to="/privacy" className="hover:text-red-500 transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-red-500 transition-colors">Terms of Service</Link>
-            <Link to="/faq" className="hover:text-red-500 transition-colors">FAQ</Link>
+            <Link to="" className="hover:text-red-500 transition-colors">Privacy Policy</Link>
+            <Link to="" className="hover:text-red-500 transition-colors">Terms of Service</Link>
+            <Link to="" className="hover:text-red-500 transition-colors">FAQ</Link>
           </div>
         </div>
       </div>

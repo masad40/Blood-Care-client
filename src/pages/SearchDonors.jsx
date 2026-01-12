@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { motion } from "framer-motion";
+import { FaTint, FaMapMarkedAlt, FaHeartbeat } from "react-icons/fa";
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -18,7 +20,6 @@ const SearchDonors = () => {
     upazila: "",
   });
 
-  // Load districts and upazilas on mount
   useEffect(() => {
     Promise.all([
       fetch("/districts.json").then((res) => res.json()),
@@ -28,13 +29,11 @@ const SearchDonors = () => {
         setDistricts(districtData.districts || []);
         setAllUpazilas(upazilaData.upazilas || []);
       })
-      .catch((err) => {
-        console.error("Failed to load location data", err);
+      .catch(() => {
         toast.error("Failed to load districts/upazilas");
       });
   }, []);
 
-  // Update filtered upazilas on district change
   const handleDistrictChange = (e) => {
     const districtName = e.target.value;
     setSearch((prev) => ({ ...prev, district: districtName, upazila: "" }));
@@ -53,7 +52,6 @@ const SearchDonors = () => {
     }
   };
 
-  // Search donors with validation
   const handleSearch = async (e) => {
     e.preventDefault();
 
@@ -83,10 +81,11 @@ const SearchDonors = () => {
       if (foundDonors.length === 0) {
         toast.error("No donors found with these criteria. Try different filters.");
       } else {
-        toast.success(`Found ${foundDonors.length} donor${foundDonors.length > 1 ? "s" : ""}!`);
+        toast.success(
+          `Found ${foundDonors.length} donor${foundDonors.length > 1 ? "s" : ""}!`
+        );
       }
-    } catch (err) {
-      console.error("Search error:", err.response?.data || err.message);
+    } catch {
       toast.error("Failed to search donors. Please try again.");
       setDonors([]);
     } finally {
@@ -94,7 +93,6 @@ const SearchDonors = () => {
     }
   };
 
-  // Reset all search fields and results
   const resetSearch = () => {
     setSearch({ bloodGroup: "", district: "", upazila: "" });
     setFilteredUpazilas([]);
@@ -111,31 +109,47 @@ const SearchDonors = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500">
         <div className="max-w-7xl mx-auto">
-          <header className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-red-600 dark:text-red-500 mb-6">
-              🔍 Search for Blood Donors
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="text-center mb-16"
+          >
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-red-600 dark:text-red-500 mb-6 flex items-center justify-center gap-3">
+              <FaHeartbeat className="text-4xl" /> Search for Blood Donors
             </h1>
             <p className="text-xl sm:text-2xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
               Find available donors near you instantly and help save a life today.
             </p>
-          </header>
+          </motion.header>
 
-          <section className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl p-8 lg:p-12 mb-16">
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl p-8 lg:p-12 mb-16"
+          >
             <form
               onSubmit={handleSearch}
               className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
               {/* Blood Group Select */}
               <div>
-                <label htmlFor="bloodGroup" className="label text-lg font-semibold">
+                <label
+                  htmlFor="bloodGroup"
+                  className="label text-lg font-semibold flex items-center gap-2"
+                >
+                  <FaTint className="text-red-600 dark:text-red-400" />
                   Blood Group <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="bloodGroup"
                   value={search.bloodGroup}
-                  onChange={(e) => setSearch((prev) => ({ ...prev, bloodGroup: e.target.value }))}
+                  onChange={(e) =>
+                    setSearch((prev) => ({ ...prev, bloodGroup: e.target.value }))
+                  }
                   className="select select-bordered w-full text-lg rounded-xl"
                   required
                 >
@@ -150,7 +164,11 @@ const SearchDonors = () => {
 
               {/* District Select */}
               <div>
-                <label htmlFor="district" className="label text-lg font-semibold">
+                <label
+                  htmlFor="district"
+                  className="label text-lg font-semibold flex items-center gap-2"
+                >
+                  <FaMapMarkedAlt className="text-red-600 dark:text-red-400" />
                   District <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -171,19 +189,27 @@ const SearchDonors = () => {
 
               {/* Upazila Select */}
               <div>
-                <label htmlFor="upazila" className="label text-lg font-semibold">
+                <label
+                  htmlFor="upazila"
+                  className="label text-lg font-semibold flex items-center gap-2"
+                >
+                  <FaMapMarkedAlt className="text-red-600 dark:text-red-400" />
                   Upazila <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="upazila"
                   value={search.upazila}
-                  onChange={(e) => setSearch((prev) => ({ ...prev, upazila: e.target.value }))}
+                  onChange={(e) =>
+                    setSearch((prev) => ({ ...prev, upazila: e.target.value }))
+                  }
                   className="select select-bordered w-full text-lg rounded-xl"
                   disabled={filteredUpazilas.length === 0}
                   required
                 >
                   <option value="">
-                    {filteredUpazilas.length === 0 ? "Select district first" : "Select Upazila"}
+                    {filteredUpazilas.length === 0
+                      ? "Select district first"
+                      : "Select Upazila"}
                   </option>
                   {filteredUpazilas.map((u) => (
                     <option key={u.id} value={u.name}>
@@ -195,13 +221,19 @@ const SearchDonors = () => {
 
               {/* Buttons */}
               <div className="flex flex-col justify-end gap-4">
-                <button
+                <motion.button
                   type="submit"
                   disabled={loading}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   className="btn btn-error btn-lg w-full text-xl font-bold shadow-xl hover:shadow-2xl transition"
                 >
-                  {loading ? <span className="loading loading-spinner"></span> : "Search Donors"}
-                </button>
+                  {loading ? (
+                    <span className="loading loading-spinner"></span>
+                  ) : (
+                    "Search Donors"
+                  )}
+                </motion.button>
                 <button
                   type="button"
                   onClick={resetSearch}
@@ -211,7 +243,7 @@ const SearchDonors = () => {
                 </button>
               </div>
             </form>
-          </section>
+          </motion.section>
 
           {/* Results Section */}
           {loading ? (
@@ -219,14 +251,19 @@ const SearchDonors = () => {
               <span className="loading loading-spinner loading-lg text-red-600"></span>
             </div>
           ) : donors.length === 0 ? (
-            <section className="text-center py-20 bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl">
+            <motion.section
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7 }}
+              className="text-center py-20 bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl"
+            >
               <p className="text-2xl sm:text-3xl text-gray-600 dark:text-gray-400 mb-8">
                 No donors found matching your search criteria.
               </p>
               <p className="text-lg text-gray-500 dark:text-gray-400">
                 Try adjusting the filters or check back later.
               </p>
-            </section>
+            </motion.section>
           ) : (
             <>
               <div className="text-center mb-10">
@@ -237,9 +274,13 @@ const SearchDonors = () => {
 
               <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {donors.map((donor) => (
-                  <article
+                  <motion.article
                     key={donor._id}
-                    className="card bg-base-100 dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 rounded-3xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.03, boxShadow: "0 8px 20px rgba(239, 68, 68, 0.4)" }}
+                    transition={{ duration: 0.3 }}
+                    className="card bg-base-100 dark:bg-gray-800 shadow-xl rounded-3xl cursor-pointer"
                   >
                     <div className="card-body items-center text-center p-8">
                       <div className="avatar mb-6">
@@ -281,7 +322,7 @@ const SearchDonors = () => {
                         </a>
                       </div>
                     </div>
-                  </article>
+                  </motion.article>
                 ))}
               </section>
             </>

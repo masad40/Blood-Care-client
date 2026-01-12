@@ -4,6 +4,8 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import { Loader2, Edit2, Trash2, ArrowLeft, Heart } from "lucide-react";
 
 const STATUS_STYLES = {
   pending: "badge-warning",
@@ -23,7 +25,6 @@ const RequestDetails = () => {
   const [processingDonate, setProcessingDonate] = useState(false);
   const [processingDelete, setProcessingDelete] = useState(false);
 
-  // Fetch request details function, wrapped in useCallback for stable identity
   const fetchRequestDetails = useCallback(async () => {
     setLoading(true);
     try {
@@ -39,12 +40,10 @@ const RequestDetails = () => {
     }
   }, [id, navigate]);
 
-  // Fetch on mount and when id changes
   useEffect(() => {
     fetchRequestDetails();
   }, [fetchRequestDetails]);
 
-  // Confirm donation handler
   const handleDonate = async () => {
     if (processingDonate) return;
     setProcessingDonate(true);
@@ -67,7 +66,6 @@ const RequestDetails = () => {
     }
   };
 
-  // Delete request handler
   const handleDelete = async () => {
     if (processingDelete) return;
     const confirmed = window.confirm(
@@ -89,7 +87,6 @@ const RequestDetails = () => {
     }
   };
 
-  // Render status badge with styles
   const getStatusBadge = (status) => {
     const style = STATUS_STYLES[status] || "badge-ghost";
     return (
@@ -105,7 +102,7 @@ const RequestDetails = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <span className="loading loading-spinner loading-lg text-red-600" />
+        <Loader2 className="animate-spin text-red-600" size={48} />
       </div>
     );
   }
@@ -117,7 +114,8 @@ const RequestDetails = () => {
           <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
             Request Not Found
           </p>
-          <Link to="/donation-requests" className="btn btn-error mt-6">
+          <Link to="/donation-requests" className="btn btn-error mt-6 flex items-center gap-2">
+            <ArrowLeft size={20} />
             Back to Requests
           </Link>
         </div>
@@ -138,7 +136,13 @@ const RequestDetails = () => {
         />
       </Helmet>
 
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Page Container with fade-in animation */}
+      <motion.main
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
+      >
         <div className="max-w-5xl mx-auto">
           <section className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
             {/* HEADER */}
@@ -147,7 +151,10 @@ const RequestDetails = () => {
                 Blood Donation Request
               </h1>
               <div className="flex flex-wrap justify-center gap-6 text-2xl">
-                <span className="badge badge-lg bg-white text-red-600 font-bold px-8 py-4" aria-label={`Blood group ${request.bloodGroup}`}>
+                <span
+                  className="badge badge-lg bg-white text-red-600 font-bold px-8 py-4"
+                  aria-label={`Blood group ${request.bloodGroup}`}
+                >
                   {request.bloodGroup}
                 </span>
                 {getStatusBadge(request.status)}
@@ -259,13 +266,16 @@ const RequestDetails = () => {
               <nav className="flex flex-wrap justify-center gap-6 pt-10 border-t border-gray-300 dark:border-gray-700">
                 {/* Donate Button */}
                 {request.status === "pending" && (
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setShowDonateModal(true)}
-                    className="btn btn-error btn-lg text-xl px-12 py-5 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                    className="btn btn-error btn-lg text-xl px-12 py-5 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3"
                     aria-label="I want to donate"
                   >
+                    <Heart size={24} />
                     I Want to Donate 🩸
-                  </button>
+                  </motion.button>
                 )}
 
                 {/* Edit/Delete Buttons */}
@@ -274,42 +284,69 @@ const RequestDetails = () => {
                     <>
                       <Link
                         to={`/dashboard/edit-request/${request._id}`}
-                        className="btn btn-warning btn-lg text-xl px-10 py-5 shadow-xl hover:shadow-2xl transition"
+                        className="btn btn-warning btn-lg text-xl px-10 py-5 shadow-xl hover:shadow-2xl transition flex items-center gap-2"
                         aria-label="Edit Request"
                       >
+                        <Edit2 size={20} />
                         Edit Request
                       </Link>
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={handleDelete}
                         disabled={processingDelete}
-                        className="btn btn-ghost btn-lg text-xl text-error border-error hover:bg-error hover:text-white transition"
+                        className="btn btn-ghost btn-lg text-xl text-error border-error hover:bg-error hover:text-white transition flex items-center gap-2"
                         aria-label="Delete Request"
                       >
-                        {processingDelete ? "Deleting..." : "Delete Request"}
-                      </button>
+                        {processingDelete ? (
+                          <>
+                            <Loader2 className="animate-spin" size={20} /> Deleting...
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 size={20} />
+                            Delete Request
+                          </>
+                        )}
+                      </motion.button>
                     </>
                   )}
 
                 {/* Back to All Requests */}
-                <Link
-                  to="/donation-requests"
-                  className="btn btn-outline btn-lg text-xl px-10 py-5"
-                  aria-label="Back to All Requests"
-                >
-                  ← Back to All Requests
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link
+                    to="/donation-requests"
+                    className="btn btn-outline btn-lg text-xl px-10 py-5 flex items-center gap-2"
+                    aria-label="Back to All Requests"
+                  >
+                    <ArrowLeft size={20} />
+                    <span className="hidden md:block">Back to All</span> Requests
+                  </Link>
+                  <Link
+                    to="/dashboard"
+                    className="btn btn-outline btn-lg text-xl px-10 py-5 flex items-center gap-2"
+                    aria-label="Back to Dashboard"
+                  >
+                    <ArrowLeft size={20} />
+                   <span className="hidden md:block">Back to</span>  Dashboard
+                  </Link>
+                </div>
               </nav>
             </div>
           </section>
         </div>
-      </main>
+      </motion.main>
 
       {/* DONATE CONFIRM MODAL */}
       {showDonateModal && (
         <dialog open className="modal modal-open">
-          <form
+          <motion.form
             method="dialog"
             className="modal-box max-w-lg bg-white dark:bg-gray-800"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
             onSubmit={(e) => {
               e.preventDefault();
               handleDonate();
@@ -350,22 +387,26 @@ const RequestDetails = () => {
             </div>
 
             <div className="modal-action flex justify-center gap-6 mt-10">
-              <button
+              <motion.button
                 type="submit"
                 disabled={processingDonate}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="btn btn-error btn-lg text-xl px-12 py-5 shadow-xl hover:shadow-2xl transition"
               >
                 {processingDonate ? "Confirming..." : "Yes, I Will Donate"}
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
                 onClick={() => setShowDonateModal(false)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="btn btn-ghost btn-lg text-xl"
               >
                 Cancel
-              </button>
+              </motion.button>
             </div>
-          </form>
+          </motion.form>
         </dialog>
       )}
     </>

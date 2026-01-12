@@ -4,10 +4,38 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
+/* ================= ANIMATION VARIANTS ================= */
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
+const stagger = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const zoomIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5 },
+  },
+};
 
 const DonationRequest = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -18,9 +46,12 @@ const DonationRequest = () => {
   const fetchPendingRequests = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axios.get("https://blood-donation-server-tan.vercel.app/donation-requests/public", {
-        params: { page, limit: 9 },
-      });
+      const res = await axios.get(
+        "https://blood-donation-server-tan.vercel.app/donation-requests/public",
+        {
+          params: { page, limit: 9 },
+        }
+      );
       setRequests(res.data.requests || []);
       setPagination(res.data.pagination || { currentPage: 1, totalPages: 1 });
     } catch (err) {
@@ -50,7 +81,7 @@ const DonationRequest = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Skeleton Card
+  /* ================= SKELETON CARD ================= */
   const SkeletonCard = () => (
     <div className="card bg-base-100 dark:bg-gray-800 shadow-xl animate-pulse">
       <div className="card-body">
@@ -72,33 +103,57 @@ const DonationRequest = () => {
     <>
       <Helmet>
         <title>Urgent Blood Requests | BloodCare</title>
-        <meta name="description" content="See urgent blood donation requests and help save lives today." />
+        <meta
+          name="description"
+          content="See urgent blood donation requests and help save lives today."
+        />
       </Helmet>
 
-      <div className="min-h-screen bg-base-200 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      {/* ================= PAGE WRAPPER ================= */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="min-h-screen bg-base-200 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
+      >
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
+          {/* ================= HEADER ================= */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            className="text-center mb-16"
+          >
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-red-600 dark:text-red-500 mb-6">
               🩸 Urgent Blood Requests
             </h1>
             <p className="text-xl sm:text-2xl text-base-content/80 max-w-3xl mx-auto">
               Someone needs your help right now. Find matching requests near you.
             </p>
-          </div>
+          </motion.div>
 
+          {/* ================= LOADING ================= */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(9)].map((_, i) => <SkeletonCard key={i} />)}
+              {[...Array(9)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
             </div>
           ) : requests.length === 0 ? (
-            <div className="card bg-base-100 dark:bg-gray-800 shadow-2xl text-center p-16 rounded-3xl">
+            /* ================= EMPTY STATE ================= */
+            <motion.div
+              variants={zoomIn}
+              initial="hidden"
+              animate="visible"
+              className="card bg-base-100 dark:bg-gray-800 shadow-2xl text-center p-16 rounded-3xl"
+            >
               <h2 className="text-3xl font-bold mb-6 text-base-content/80">
                 No Urgent Requests Right Now
               </h2>
               <p className="text-lg mb-10 text-base-content/70">
                 That's a good sign! No one is waiting desperately at the moment.
               </p>
+
               {user ? (
                 <Link
                   to="/dashboard/createRequest"
@@ -114,18 +169,28 @@ const DonationRequest = () => {
                   Login to Help
                 </Link>
               )}
-            </div>
+            </motion.div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {/* ================= REQUEST CARDS ================= */}
+              <motion.div
+                variants={stagger}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
+              >
                 {requests.map((req) => (
-                  <div
+                  <motion.div
                     key={req._id}
-                    className="card bg-base-100 dark:bg-gray-800 shadow-xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-2 border border-base-200 dark:border-gray-700"
+                    variants={fadeUp}
+                    whileHover={{ y: -10, scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    className="card bg-base-100 dark:bg-gray-800 shadow-xl border border-base-200 dark:border-gray-700"
                   >
                     <div className="card-body p-6">
                       <div className="flex justify-between items-start mb-5">
-                        <h2 className="card-title text-2xl font-bold text-base-content truncate max-w-[70%]">
+                        <h2 className="card-title text-2xl font-bold truncate max-w-[70%]">
                           {req.recipientName}
                         </h2>
                         <div className="badge badge-error badge-lg text-white font-bold">
@@ -134,20 +199,20 @@ const DonationRequest = () => {
                       </div>
 
                       <div className="space-y-3 text-base-content/80 text-sm">
-                        <p className="flex items-center gap-2">
-                          <span className="font-semibold">Location:</span>
+                        <p>
+                          <span className="font-semibold">Location:</span>{" "}
                           {req.upazila}, {req.district}
                         </p>
-                        <p className="flex items-center gap-2">
-                          <span className="font-semibold">Hospital:</span>
+                        <p>
+                          <span className="font-semibold">Hospital:</span>{" "}
                           {req.hospital}
                         </p>
-                        <p className="flex items-center gap-2">
-                          <span className="font-semibold">Date:</span>
+                        <p>
+                          <span className="font-semibold">Date:</span>{" "}
                           {new Date(req.donationDate).toLocaleDateString("en-GB")}
                         </p>
-                        <p className="flex items-center gap-2">
-                          <span className="font-semibold">Time:</span>
+                        <p>
+                          <span className="font-semibold">Time:</span>{" "}
                           {req.donationTime}
                         </p>
                       </div>
@@ -161,15 +226,23 @@ const DonationRequest = () => {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
 
-              {/* Pagination */}
+              {/* ================= PAGINATION ================= */}
               {pagination.totalPages > 1 && (
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mt-12">
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  className="flex flex-col sm:flex-row justify-center items-center gap-6 mt-12"
+                >
                   <button
-                    onClick={() => handlePageChange(pagination.currentPage - 1)}
+                    onClick={() =>
+                      handlePageChange(pagination.currentPage - 1)
+                    }
                     disabled={pagination.currentPage === 1}
                     className="btn btn-outline btn-error btn-wide sm:btn-md"
                   >
@@ -181,18 +254,22 @@ const DonationRequest = () => {
                   </span>
 
                   <button
-                    onClick={() => handlePageChange(pagination.currentPage + 1)}
-                    disabled={pagination.currentPage === pagination.totalPages}
+                    onClick={() =>
+                      handlePageChange(pagination.currentPage + 1)
+                    }
+                    disabled={
+                      pagination.currentPage === pagination.totalPages
+                    }
                     className="btn btn-outline btn-error btn-wide sm:btn-md"
                   >
                     Next
                   </button>
-                </div>
+                </motion.div>
               )}
             </>
           )}
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };

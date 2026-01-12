@@ -6,6 +6,15 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 
+import { motion } from "framer-motion";
+import {
+  FiEdit,
+  FiSave,
+  FiXCircle,
+  FiLoader,
+  FiChevronLeft,
+} from "react-icons/fi";
+
 const EditRequest = () => {
   const { user, role } = useContext(AuthContext);
   const { id } = useParams();
@@ -42,7 +51,9 @@ const EditRequest = () => {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const res = await axios.get(`https://blood-donation-server-tan.vercel.app/donation-requests/${id}`);
+        const res = await axios.get(
+          `https://blood-donation-server-tan.vercel.app/donation-requests/${id}`
+        );
         const req = res.data;
         setRequest(req);
 
@@ -67,7 +78,9 @@ const EditRequest = () => {
         // Pre-filter upazilas based on saved district
         const districtObj = districts.find((d) => d.name === req.district);
         if (districtObj) {
-          const filtered = allUpazilas.filter((u) => u.district_id === districtObj.id);
+          const filtered = allUpazilas.filter(
+            (u) => u.district_id === districtObj.id
+          );
           setFilteredUpazilas(filtered);
         }
       } catch (err) {
@@ -78,7 +91,7 @@ const EditRequest = () => {
       }
     };
 
-    if (user && districts.length > 0) {
+    if (user && districts.length > 0 && allUpazilas.length > 0) {
       fetchRequest();
     }
   }, [id, user, districts, allUpazilas, navigate, setValue]);
@@ -88,7 +101,9 @@ const EditRequest = () => {
     if (selectedDistrict) {
       const district = districts.find((d) => d.name === selectedDistrict);
       if (district) {
-        const filtered = allUpazilas.filter((u) => u.district_id === district.id);
+        const filtered = allUpazilas.filter(
+          (u) => u.district_id === district.id
+        );
         setFilteredUpazilas(filtered);
         setValue("recipientUpazila", "");
       } else {
@@ -103,22 +118,26 @@ const EditRequest = () => {
     setIsSubmitting(true);
 
     try {
-      await axios.patch(`https://blood-donation-server-tan.vercel.app/donation-requests/${id}`, {
-        recipientName: data.recipientName.trim(),
-        bloodGroup: data.bloodGroup,
-        district: data.recipientDistrict,
-        upazila: data.recipientUpazila,
-        hospital: data.hospitalName.trim(),
-        fullAddress: data.fullAddress.trim(),
-        donationDate: data.donationDate,
-        donationTime: data.donationTime,
-        requestMessage: data.requestMessage.trim(),
-      });
+      await axios.patch(
+        `https://blood-donation-server-tan.vercel.app/donation-requests/${id}`,
+        {
+          recipientName: data.recipientName.trim(),
+          bloodGroup: data.bloodGroup,
+          district: data.recipientDistrict,
+          upazila: data.recipientUpazila,
+          hospital: data.hospitalName.trim(),
+          fullAddress: data.fullAddress.trim(),
+          donationDate: data.donationDate,
+          donationTime: data.donationTime,
+          requestMessage: data.requestMessage.trim(),
+        }
+      );
 
       toast.success("Request updated successfully! 🩸");
       navigate("/dashboard/my-donation-requests");
     } catch (err) {
-      const errorMsg = err.response?.data?.message || "Failed to update request";
+      const errorMsg =
+        err.response?.data?.message || "Failed to update request";
       toast.error(errorMsg);
     } finally {
       setIsSubmitting(false);
@@ -127,8 +146,8 @@ const EditRequest = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <span className="loading loading-spinner loading-lg text-red-600"></span>
+      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <FiLoader className="animate-spin text-6xl text-red-600" />
       </div>
     );
   }
@@ -136,10 +155,15 @@ const EditRequest = () => {
   if (user?.status === "blocked") {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="alert alert-error shadow-2xl max-w-lg text-center p-12 rounded-3xl">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="alert alert-error shadow-2xl max-w-lg text-center p-12 rounded-3xl"
+        >
+          <FiXCircle className="mx-auto mb-4 text-6xl" />
           <span className="text-3xl font-bold">Account Blocked</span>
           <p className="mt-6 text-xl">You cannot edit donation requests.</p>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -150,18 +174,33 @@ const EditRequest = () => {
         <title>Edit Donation Request | BloodCare</title>
       </Helmet>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12"
+      >
         <div className="card bg-base-100 dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden">
           <div className="bg-gradient-to-r from-red-600 to-red-800 px-6 py-12 text-center text-white">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4">
-              Edit Donation Request 🩸
-            </h1>
+            <motion.h1
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 flex justify-center items-center gap-3"
+            >
+              <FiEdit /> Edit Donation Request 🩸
+            </motion.h1>
             <p className="text-lg md:text-xl opacity-90">
               Update details to help donors find you faster.
             </p>
           </div>
 
-          <div className="card-body p-6 lg:p-12">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.7 }}
+            className="card-body p-6 lg:p-12"
+          >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {/* Requester Info - Readonly */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-base-200 dark:bg-gray-700/50 p-6 rounded-2xl">
@@ -194,13 +233,18 @@ const EditRequest = () => {
                   <input
                     {...register("recipientName", {
                       required: "Recipient name is required",
-                      minLength: { value: 3, message: "Minimum 3 characters" },
+                      minLength: {
+                        value: 3,
+                        message: "Minimum 3 characters",
+                      },
                     })}
                     type="text"
                     className="input input-bordered w-full"
                   />
                   {errors.recipientName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.recipientName.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipientName.message}
+                    </p>
                   )}
                 </div>
 
@@ -209,18 +253,31 @@ const EditRequest = () => {
                     Blood Group <span className="text-red-500">*</span>
                   </label>
                   <select
-                    {...register("bloodGroup", { required: "Blood group is required" })}
+                    {...register("bloodGroup", {
+                      required: "Blood group is required",
+                    })}
                     className="select select-bordered w-full"
                   >
                     <option value="">Select Blood Group</option>
-                    {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
+                    {[
+                      "A+",
+                      "A-",
+                      "B+",
+                      "B-",
+                      "AB+",
+                      "AB-",
+                      "O+",
+                      "O-",
+                    ].map((bg) => (
                       <option key={bg} value={bg}>
                         {bg}
                       </option>
                     ))}
                   </select>
                   {errors.bloodGroup && (
-                    <p className="text-red-500 text-sm mt-1">{errors.bloodGroup.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.bloodGroup.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -232,7 +289,9 @@ const EditRequest = () => {
                     District <span className="text-red-500">*</span>
                   </label>
                   <select
-                    {...register("recipientDistrict", { required: "District is required" })}
+                    {...register("recipientDistrict", {
+                      required: "District is required",
+                    })}
                     className="select select-bordered w-full"
                   >
                     <option value="">Select District</option>
@@ -243,7 +302,9 @@ const EditRequest = () => {
                     ))}
                   </select>
                   {errors.recipientDistrict && (
-                    <p className="text-red-500 text-sm mt-1">{errors.recipientDistrict.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipientDistrict.message}
+                    </p>
                   )}
                 </div>
 
@@ -252,12 +313,16 @@ const EditRequest = () => {
                     Upazila <span className="text-red-500">*</span>
                   </label>
                   <select
-                    {...register("recipientUpazila", { required: "Upazila is required" })}
+                    {...register("recipientUpazila", {
+                      required: "Upazila is required",
+                    })}
                     className="select select-bordered w-full"
                     disabled={!filteredUpazilas.length}
                   >
                     <option value="">
-                      {filteredUpazilas.length ? "Select Upazila" : "Select district first"}
+                      {filteredUpazilas.length
+                        ? "Select Upazila"
+                        : "Select district first"}
                     </option>
                     {filteredUpazilas.map((u) => (
                       <option key={u.id} value={u.name}>
@@ -266,7 +331,9 @@ const EditRequest = () => {
                     ))}
                   </select>
                   {errors.recipientUpazila && (
-                    <p className="text-red-500 text-sm mt-1">{errors.recipientUpazila.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipientUpazila.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -278,12 +345,16 @@ const EditRequest = () => {
                     Hospital Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    {...register("hospitalName", { required: "Hospital name is required" })}
+                    {...register("hospitalName", {
+                      required: "Hospital name is required",
+                    })}
                     type="text"
                     className="input input-bordered w-full"
                   />
                   {errors.hospitalName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.hospitalName.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.hospitalName.message}
+                    </p>
                   )}
                 </div>
 
@@ -292,12 +363,16 @@ const EditRequest = () => {
                     Full Address <span className="text-red-500">*</span>
                   </label>
                   <input
-                    {...register("fullAddress", { required: "Full address is required" })}
+                    {...register("fullAddress", {
+                      required: "Full address is required",
+                    })}
                     type="text"
                     className="input input-bordered w-full"
                   />
                   {errors.fullAddress && (
-                    <p className="text-red-500 text-sm mt-1">{errors.fullAddress.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.fullAddress.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -311,17 +386,18 @@ const EditRequest = () => {
                   <input
                     {...register("donationDate", {
                       required: "Date is required",
-                      min: {
-                        value: minDate,
-                        message: "Date cannot be in the past",
-                      },
+                      validate: (value) =>
+                        new Date(value) >= new Date(minDate) ||
+                        "Date cannot be in the past",
                     })}
                     type="date"
                     min={minDate}
                     className="input input-bordered w-full"
                   />
                   {errors.donationDate && (
-                    <p className="text-red-500 text-sm mt-1">{errors.donationDate.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.donationDate.message}
+                    </p>
                   )}
                 </div>
 
@@ -330,12 +406,16 @@ const EditRequest = () => {
                     Preferred Time <span className="text-red-500">*</span>
                   </label>
                   <input
-                    {...register("donationTime", { required: "Time is required" })}
+                    {...register("donationTime", {
+                      required: "Time is required",
+                    })}
                     type="time"
                     className="input input-bordered w-full"
                   />
                   {errors.donationTime && (
-                    <p className="text-red-500 text-sm mt-1">{errors.donationTime.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.donationTime.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -348,46 +428,59 @@ const EditRequest = () => {
                 <textarea
                   {...register("requestMessage", {
                     required: "Please describe the requirement",
-                    minLength: { value: 10, message: "Minimum 20 characters" },
+                    minLength: {
+                      value: 10,
+                      message: "Minimum 20 characters",
+                    },
                   })}
                   rows="6"
                   placeholder="Patient's condition, urgency, number of bags needed, contact person etc..."
                   className="textarea textarea-bordered w-full resize-none"
                 />
                 {errors.requestMessage && (
-                  <p className="text-red-500 text-sm mt-1">{errors.requestMessage.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.requestMessage.message}
+                  </p>
                 )}
               </div>
 
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row justify-center gap-6 pt-8">
-                <button
+                <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-error btn-lg px-12 font-bold shadow-xl hover:shadow-2xl transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="btn btn-error btn-lg px-12 font-bold shadow-xl flex items-center justify-center gap-3"
                 >
                   {isSubmitting ? (
                     <>
-                      <span className="loading loading-spinner"></span>
+                      <FiLoader className="animate-spin text-xl" />
                       Updating...
                     </>
                   ) : (
-                    "Update Request"
+                    <>
+                      <FiSave />
+                      Update Request
+                    </>
                   )}
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="btn btn-outline btn-lg px-12"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="btn btn-outline btn-lg px-12 flex items-center justify-center gap-3"
                 >
+                  <FiChevronLeft />
                   Cancel
-                </button>
+                </motion.button>
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };

@@ -3,6 +3,16 @@ import { Helmet } from "react-helmet";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import {
+  Users,
+  Mail,
+  Droplet,
+  MapPin,
+  Shield,
+  Ban,
+  CheckCircle,
+  MoreVertical,
+} from "lucide-react";
 
 const AllUsers = () => {
   const { role } = useContext(AuthContext);
@@ -96,14 +106,15 @@ const AllUsers = () => {
         <div className="bg-base-100 dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
           <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-10">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
-              <div>
+              <div className="flex items-center gap-3">
+                <Users className="w-8 h-8 text-white" />
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-                  👥 All Users
+                  All Users
                 </h1>
-                <p className="mt-2 text-red-100 text-lg">
-                  Total: {pagination.totalUsers} users
-                </p>
               </div>
+              <p className="mt-2 text-red-100 text-lg">
+                Total: {pagination.totalUsers} users
+              </p>
 
               <select
                 value={filterStatus}
@@ -126,13 +137,14 @@ const AllUsers = () => {
               </div>
             ) : (
               <>
+                {/* Desktop Table */}
                 <div className="hidden lg:block overflow-x-auto">
                   <table className="table table-zebra w-full">
                     <thead>
                       <tr className="bg-red-50 dark:bg-red-900/30 text-lg">
                         <th>Avatar</th>
                         <th>Name</th>
-                        <th>Email</th>
+                        {/* <th>Email</th> */}
                         <th>Blood Group</th>
                         <th>District</th>
                         <th>Role</th>
@@ -150,32 +162,64 @@ const AllUsers = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="font-bold text-lg">{u.name}</td>
-                          <td className="text-sm">{u.email}</td>
+
+                          {/* Name + optional Shield icon if admin */}
+                          <td className="font-bold text-lg flex items-center gap-2 whitespace-nowrap">
+                            {u.name}
+                            {u.role === "admin" && (
+                              <Shield size={18} className="text-red-600" title="Admin" />
+                            )}
+                          </td>
+
+                          {/* Email + Mail icon */}
+                          <td className="text-sm flex items-center gap-2 whitespace-nowrap">
+                            <Mail size={16} />
+                            {u.email}
+                          </td>
+
+                          {/* Blood Group + Droplet icon */}
                           <td>
-                            <span className="badge badge-error badge-lg text-white font-bold">
+                            <span className="badge badge-error badge-lg text-white font-bold flex items-center gap-1">
+                              <Droplet size={14} />
                               {u.bloodGroup}
                             </span>
                           </td>
-                          <td>{u.district || "-"}</td>
+
+                          {/* District + MapPin icon */}
+                          <td className="flex items-center gap-2 whitespace-nowrap">
+                            <MapPin size={14} />
+                            {u.district || "-"}
+                          </td>
+
+                          {/* Role badge */}
                           <td>
                             <span className="badge badge-primary capitalize font-medium">
                               {u.role}
                             </span>
                           </td>
+
+                          {/* Status + icon */}
                           <td>
                             <span
-                              className={`badge capitalize font-medium ${
+                              className={`badge capitalize font-medium flex items-center gap-1 whitespace-nowrap ${
                                 u.status === "blocked" ? "badge-error" : "badge-success"
                               }`}
                             >
+                              {u.status === "blocked" ? (
+                                <Ban size={14} />
+                              ) : (
+                                <CheckCircle size={14} />
+                              )}
                               {u.status}
                             </span>
                           </td>
+
+                          {/* Actions dropdown */}
                           <td>
                             <div className="dropdown dropdown-end">
-                              <label tabIndex={0} className="btn btn-ghost btn-sm">
-                                ⋯
+                              <label tabIndex={0} className="btn btn-ghost btn-sm flex items-center gap-1">
+                                <MoreVertical size={18} />
+                                Actions
                               </label>
                               <ul
                                 tabIndex={0}
@@ -225,6 +269,7 @@ const AllUsers = () => {
                   </table>
                 </div>
 
+                {/* Mobile cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
                   {users.map((u) => (
                     <div
@@ -239,18 +284,31 @@ const AllUsers = () => {
                             </div>
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-bold">{u.name}</h3>
-                            <p className="text-sm opacity-70">{u.email}</p>
+                            <h3 className="text-xl font-bold flex items-center gap-2 whitespace-nowrap">
+                              {u.name}
+                              {u.role === "admin" && (
+                                <Shield size={18} className="text-red-600" title="Admin" />
+                              )}
+                            </h3>
+                            <p className="text-sm opacity-70 flex items-center gap-2 whitespace-nowrap">
+                              <Mail size={16} />
+                              {u.email}
+                            </p>
                           </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3 text-sm">
-                          <div>
+                          <div className="flex items-center gap-2 whitespace-nowrap">
                             <strong>Blood:</strong>
-                            <span className="badge badge-error text-white ml-2">{u.bloodGroup}</span>
+                            <span className="badge badge-error text-white ml-2 flex items-center gap-1">
+                              <Droplet size={14} />
+                              {u.bloodGroup}
+                            </span>
                           </div>
-                          <div>
-                            <strong>District:</strong> {u.district || "-"}
+                          <div className="flex items-center gap-2 whitespace-nowrap">
+                            <strong>District:</strong>
+                            <MapPin size={14} />
+                            {u.district || "-"}
                           </div>
                           <div>
                             <strong>Role:</strong>
@@ -259,10 +317,15 @@ const AllUsers = () => {
                           <div>
                             <strong>Status:</strong>
                             <span
-                              className={`badge capitalize ml-2 ${
+                              className={`badge capitalize ml-2 flex items-center gap-1 whitespace-nowrap ${
                                 u.status === "blocked" ? "badge-error" : "badge-success"
                               }`}
                             >
+                              {u.status === "blocked" ? (
+                                <Ban size={14} />
+                              ) : (
+                                <CheckCircle size={14} />
+                              )}
                               {u.status}
                             </span>
                           </div>
@@ -270,8 +333,9 @@ const AllUsers = () => {
 
                         <div className="card-actions justify-end mt-6">
                           <div className="dropdown dropdown-top dropdown-end">
-                            <label tabIndex={0} className="btn btn-outline btn-error">
-                              Actions ⋯
+                            <label tabIndex={0} className="btn btn-outline btn-error flex items-center gap-1">
+                              Actions
+                              <MoreVertical size={16} />
                             </label>
                             <ul
                               tabIndex={0}
@@ -320,6 +384,7 @@ const AllUsers = () => {
                   ))}
                 </div>
 
+                {/* Pagination */}
                 {pagination.totalPages > 1 && (
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12">
                     <button

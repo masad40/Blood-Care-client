@@ -14,6 +14,35 @@ import {
 } from "react-icons/fa";
 import CountUp from "react-countup";
 
+/* ================= ANIMATION VARIANTS ================= */
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
+const stagger = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.2 },
+  },
+};
+
+const zoomIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5 },
+  },
+};
+
+/* ================= COMPONENT ================= */
+
 const Home = () => {
   const stats = [
     { label: "Active Donors", value: 12500, icon: <FaUsers className="mx-auto text-red-600 text-5xl mb-3" /> },
@@ -57,51 +86,40 @@ const Home = () => {
     <>
       <Helmet>
         <title>BloodCare | Donate Blood, Save Lives</title>
-        <meta
-          name="description"
-          content="BloodCare is a modern blood donation platform connecting verified donors with patients in urgent need."
-        />
       </Helmet>
 
-      <div className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+      >
 
         {/* HERO */}
-        <section className="relative h-[70vh] flex items-center justify-center bg-gradient-to-r from-red-700 to-red-900 text-white overflow-hidden px-6">
-          <div className="max-w-4xl text-center md:text-left space-y-6 z-10">
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
+        <section className="relative h-[70vh] flex flex-col items-center justify-center bg-gradient-to-r from-red-700 to-red-900 text-white overflow-hidden px-6">
+          <div className="max-w-4xl text-center space-y-6 z-10">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
               Donate{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-red-500">
                 Blood,
               </span>{" "}
               Save Lives
             </h1>
-            <p className="max-w-xl mx-auto md:mx-0 text-lg md:text-xl opacity-90 leading-relaxed">
+            <p className="max-w-xl mx-auto text-lg sm:text-xl opacity-90 leading-relaxed">
               BloodCare connects verified donors with people who urgently need blood.<br />
               One donation can save <span className="font-semibold">up to three lives.</span>
             </p>
 
-            <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-6 mt-8">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+            <div className="flex flex-col sm:flex-row justify-center gap-6 mt-8">
+              <Link
+                to="/register"
+                className="btn btn-lg bg-gradient-to-r from-yellow-400 via-red-500 to-red-700 text-white font-bold rounded-full shadow-lg"
               >
-                <Link
-                  to="/register"
-                  className="btn btn-lg bg-gradient-to-r from-yellow-400 via-red-500 to-red-700 text-white font-bold rounded-full shadow-lg shadow-red-700/60 relative overflow-hidden"
-                >
-                  <span className="relative z-10">Become a Donor</span>
-                  <motion.span
-                    className="absolute inset-0 rounded-full bg-yellow-400 opacity-50"
-                    animate={{ scale: [1, 1.4, 1], opacity: [0.7, 0, 0.7] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    aria-hidden="true"
-                  />
-                </Link>
-              </motion.div>
-
+                Become a Donor
+              </Link>
               <Link
                 to="/searchDonors"
-                className="btn btn-lg btn-outline border-white text-white hover:bg-white hover:text-red-700 rounded-full font-semibold transition"
+                className="btn btn-lg btn-outline border-white text-white hover:bg-white hover:text-red-700 rounded-full font-semibold"
               >
                 Search Donors
               </Link>
@@ -136,16 +154,20 @@ const Home = () => {
           </motion.div>
         </section>
 
+
         {/* FEATURES */}
         <section className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Why Choose BloodCare</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { title: "Fast Donor Search", desc: "Search donors by blood group, district, and availability." },
               { title: "Verified Donors", desc: "Every donor profile is verified for authenticity." },
               { title: "24/7 Emergency Support", desc: "We help connect donors and patients anytime, anywhere." },
             ].map(({ title, desc }, i) => (
-              <div key={i} className="card bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
+              <div
+                key={i}
+                className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl"
+              >
                 <h3 className="text-xl font-bold mb-4">{title}</h3>
                 <p className="text-gray-600 dark:text-gray-400">{desc}</p>
               </div>
@@ -157,38 +179,48 @@ const Home = () => {
         <section className="bg-gray-100 dark:bg-gray-800 py-20">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">How BloodCare Works</h2>
-            <div className="grid md:grid-cols-3 gap-10 text-center">
-              {howItWorksSteps.map(({ title, desc, icon }, i) => (
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid md:grid-cols-3 gap-10 text-center"
+            >
+              {howItWorksSteps.map((step, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.3 }}
+                  variants={fadeUp}
+                  whileHover={{ y: -10 }}
                   className="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg"
                 >
-                  {icon}
-                  <h3 className="text-xl font-bold mb-2">{title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400">{desc}</p>
+                  {step.icon}
+                  <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400">{step.desc}</p>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* STATS */}
         <section className="max-w-7xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {stats.map(({ label, value, icon }, i) => (
-              <div
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            {stats.map((stat, i) => (
+              <motion.div
                 key={i}
-                className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col items-center"
+                variants={zoomIn}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg"
               >
-                {icon}
+                {stat.icon}
                 <h3 className="text-4xl font-extrabold text-red-600">
-                  <CountUp end={value} duration={3} separator="," />+
+                  <CountUp end={stat.value} duration={3} separator="," />+
                 </h3>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">{label}</p>
-              </div>
+                <p className="text-gray-600 dark:text-gray-400">{stat.label}</p>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -213,20 +245,6 @@ const Home = () => {
               >
                 {icon}
                 <h3 className="text-xl font-bold">{title}</h3>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* POPULAR LISTINGS */}
-        <section className="max-w-7xl mx-auto px-6 py-20">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Popular Listings</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="card bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6">
-                <h3 className="text-xl font-bold mb-2">Donor Name {item}</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">Blood Group: A+</p>
-                <button className="btn btn-error btn-sm">Contact Donor</button>
               </div>
             ))}
           </div>
@@ -305,7 +323,7 @@ const Home = () => {
           <Link to="/register" className="btn btn-lg btn-error rounded-full">Join BloodCare</Link>
         </section>
 
-      </div>
+      </motion.div>
     </>
   );
 };

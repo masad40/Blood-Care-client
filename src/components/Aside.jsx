@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import {
   Home,
@@ -20,10 +20,17 @@ const Aside = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, role, logOut } = useContext(AuthContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
+  /* ---------------- THEME ---------------- */
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("theme");
-    return saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    return (
+      saved ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light")
+    );
   });
 
   useEffect(() => {
@@ -32,10 +39,24 @@ const Aside = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  const toggleTheme = () =>
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+
+  /* -------- MOBILE SCROLL LOCK -------- */
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+  }, [isOpen]);
+
   const toggleSidebar = () => setIsOpen(!isOpen);
 
-  // Role-based menu items with Lucide icons
+  /* ---------------- LOGOUT ---------------- */
+  const handleLogout = async () => {
+    await logOut();
+    setIsOpen(false);
+    navigate("/");
+  };
+
+  /* ---------------- MENU ---------------- */
   const menuItems = {
     donor: [
       { name: "Dashboard", path: "/dashboard", icon: Home },
@@ -61,29 +82,34 @@ const Aside = () => {
   return (
     <>
       <Helmet>
-        <title>BloodCare Dashboard | {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}</title>
-        <meta name="description" content="Manage blood donation requests, profile and more in BloodCare dashboard." />
-        <meta name="theme-color" content={theme === "dark" ? "#991b1b" : "#dc2626"} />
+        <title>
+          BloodCare Dashboard |{" "}
+          {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}
+        </title>
+        <meta
+          name="description"
+          content="BloodCare dashboard for managing blood donation activities."
+        />
       </Helmet>
 
-      {/* Mobile Toggle Button */}
+      {/* MOBILE TOGGLE */}
       <button
         onClick={toggleSidebar}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-all"
-        aria-label="Toggle sidebar"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-red-600 text-white rounded-xl shadow-lg"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-red-900 to-red-950 text-white 
-                    transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static
-                    ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b 
+        from-red-900 to-red-950 text-white transform transition-transform 
+        duration-300 lg:translate-x-0 lg:static
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex flex-col h-full">
 
-          {/* Logo Header */}
+          {/* LOGO */}
           <div className="p-6 border-b border-red-800/50">
             <Link
               to="/"
@@ -98,63 +124,77 @@ const Aside = () => {
             </Link>
           </div>
 
-          {/* Navigation */}
+          {/* NAV */}
           <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
             {currentMenu.map((item) => {
-              const isActive = location.pathname === item.path || 
-                              location.pathname.startsWith(item.path + "/");
+              const isActive =
+                location.pathname === item.path ||
+                (item.path !== "/dashboard" &&
+                  location.pathname.startsWith(item.path));
 
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-200
-                    ${isActive 
-                      ? "bg-red-700/90 text-white shadow-md" 
-                      : "hover:bg-red-800/50 text-red-100 hover:text-white"}`}
+                  className={`flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all
+                  ${
+                    isActive
+                      ? "bg-red-700 text-white shadow-md"
+                      : "hover:bg-red-800/50 text-red-100"
+                  }`}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <item.icon className="h-[18px] w-[18px]" />
                   <span className="font-medium">{item.name}</span>
                 </Link>
               );
             })}
 
-            {/* Theme Toggle */}
+            {/* THEME TOGGLE */}
             <button
               onClick={toggleTheme}
               className="flex items-center gap-4 px-5 py-3.5 rounded-xl w-full mt-6
-                         text-red-100 hover:bg-red-800/50 hover:text-white transition-all duration-200"
+              text-red-100 hover:bg-red-800/50 transition"
             >
-              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              <span className="font-medium">
-                {theme === "dark" ? "Light Mode" : "Dark Mode"}
-              </span>
+              {theme === "dark" ? (
+                <>
+                  <Sun size={20} />
+                  <span>Light Mode</span>
+                </>
+              ) : (
+                <>
+                  <Moon size={20} />
+                  <span>Dark Mode</span>
+                </>
+              )}
             </button>
           </nav>
 
-          {/* User Info & Logout */}
+          {/* USER INFO */}
           <div className="p-6 border-t border-red-800/50">
             <div className="flex items-center gap-4 mb-6">
               <div className="avatar">
                 <div className="w-12 rounded-full ring-2 ring-red-500/50">
                   <img
                     src={user?.photoURL || "https://i.ibb.co/ZYW3VTp/brown-brim.png"}
-                    alt="User avatar"
-                    className="object-cover"
+                    alt="User"
                   />
                 </div>
               </div>
               <div className="min-w-0">
-                <p className="font-semibold truncate">{user?.displayName || user?.name || "User"}</p>
-                <p className="text-sm text-red-300/80 capitalize">{role || "donor"}</p>
+                <p className="font-semibold truncate">
+                  {user?.displayName || user?.name || "User"}
+                </p>
+                <p className="text-sm text-red-300/80 capitalize">
+                  {role || "donor"}
+                </p>
               </div>
             </div>
 
             <button
-              onClick={logOut}
-              className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl 
-                         font-medium transition-all duration-200 flex items-center justify-center gap-2"
+              onClick={handleLogout}
+              className="w-full py-3 bg-red-700 hover:bg-red-800 rounded-xl
+              font-medium flex items-center justify-center gap-2 transition"
             >
               <LogOut size={18} />
               Logout
@@ -163,11 +203,11 @@ const Aside = () => {
         </div>
       </aside>
 
-      {/* Mobile Overlay */}
+      {/* OVERLAY */}
       {isOpen && (
         <div
           onClick={toggleSidebar}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
         />
       )}
     </>
