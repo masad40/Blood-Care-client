@@ -5,7 +5,7 @@
 BloodCare is a **MERN stack** based blood donation platform that connects blood donors with those in need, making the donation process seamless, efficient, and life-saving. The platform allows users to register as donors, create donation requests, search for donors, donate funds, and manage requests based on their roles (Donor, Volunteer, Admin).
 
 ## Live Site
-🔗 **Live Link:** https://blood-care-a11.netlify.app/
+🔗 **Live Link:** https://bloodcare-11.netlify.app/
 
 ## Admin Credentials (For Testing)
 - **Email:** tasnifmasad40@gmail.com
