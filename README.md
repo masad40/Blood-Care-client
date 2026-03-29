@@ -7,6 +7,10 @@ BloodCare is a **MERN stack** based blood donation platform that connects blood 
 ## Live Site
 🔗 **Live Link:** https://bloodcare-11.netlify.app/
 
+##Repositories 
+client site : https://github.com/masad40/Blood-Care-client.git
+server site : https://github.com/masad40/Blood-care-server.git
+
 ## Admin Credentials (For Testing)
 - **Email:** tasnifmasad40@gmail.com
 - **Password:** Admin9427
